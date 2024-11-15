@@ -1,0 +1,82 @@
+*{
+    margin: 0px;
+    padding:0pcx
+}
+
+body{
+    background-color: rgb(216, 229, 241);
+}
+
+.left{
+    background-color: rgb(51, 122, 183);
+    width: 200px;
+    height: 440px;
+    border-radius: 20px 0px 0px 20px;
+}
+
+.right{
+    background-color: white;
+    width: 450px;
+    height: 440px;
+    border-radius: 0px 20px 20px 0px;
+}
+
+.header{
+    background-color: rgb(51, 122, 183);
+    color: white;
+}
+
+.signUp{
+    margin-left: 890px;
+}
+
+.login{
+    margin-left: 20px;
+}
+
+.loginMain{
+    margin-top: 90px;
+}
+
+.loginText{
+    color: rgb(51, 122, 183);
+    margin-top: 20px;
+}
+
+.userInputs{
+    border: none;
+    width: 400px;
+    border-bottom: 1px solid grey;
+}
+
+.userInputs:focus{
+    outline: none;
+}
+
+.loginButton{
+    border: 1px solid rgb(51, 122, 183);
+    color : rgb(51, 122, 183);
+}
+
+.loginButton{
+    width: 250px;
+    border-radius: 20px;
+}
+
+.signInText{
+    color: grey;
+    font-size: small;
+}
+
+.loginButton:hover{
+    cursor: pointer;
+}
+
+.regLink{
+    font-size: 15px;
+}
+
+.regLink a{
+    text-decoration: none;
+    color: rgb(51, 122, 183);
+}
