@@ -1,0 +1,44 @@
+.homeHeader{
+    margin-left: 115px;
+    margin-right: 115px;
+    margin-top: 20px;
+    height: 60px;
+}
+
+
+.login{
+    margin-left: 990px;
+}
+
+.pdfImage{
+    margin-left: 900px;
+}
+
+.userImage{
+    border-radius: 50%;
+}
+
+.userName{
+    color: rgb(51, 122, 183);
+    font-size: 20px;
+}
+
+.userCard{
+    width: 13vw;
+}
+
+.contacts{
+    width: 69vw;
+}
+
+.createContact button{
+    color: white;
+    background-color: rgb(51, 122, 183);
+    border: none;
+    border-radius: 20px;
+}
+
+.tableHeading{
+    color: rgb(51, 122, 183);
+    border-bottom: 1px solid rgb(239, 239, 239)
+}

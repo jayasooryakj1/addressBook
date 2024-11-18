@@ -21,9 +21,30 @@ body{
     border-radius: 0px 20px 20px 0px;
 }
 
+
+.leftSign{
+    background-color: rgb(51, 122, 183);
+    width: 200px;
+    height: 500px;
+    border-radius: 20px 0px 0px 20px;
+}
+
+.rightSign{
+    background-color: white;
+    width: 450px;
+    height: 500px;
+    border-radius: 0px 20px 20px 0px;
+    font-size: 13px;
+}
+
 .header{
     background-color: rgb(51, 122, 183);
     color: white;
+}
+
+.header a{
+    color: white;
+    text-decoration: none;
 }
 
 .signUp{
@@ -36,6 +57,10 @@ body{
 
 .loginMain{
     margin-top: 90px;
+}
+
+.signupMain{
+    margin-top: 40px;
 }
 
 .loginText{
@@ -79,4 +104,12 @@ body{
 .regLink a{
     text-decoration: none;
     color: rgb(51, 122, 183);
+}
+
+.register, .loginButton{
+    color: rgb(51, 122, 183);
+    border: 1px solid rgb(51, 122, 183);
+    border-radius: 20px;
+    background-color: white;
+    padding: 5px 100px 5px 100px;
 }
