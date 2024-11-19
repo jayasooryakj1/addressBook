@@ -25,6 +25,7 @@
 
 .userCard{
     width: 13vw;
+    height: 205px;
 }
 
 .contacts{
@@ -41,4 +42,115 @@
 .tableHeading{
     color: rgb(51, 122, 183);
     border-bottom: 1px solid rgb(239, 239, 239)
+}
+
+.bgBlue{
+    background-color: rgb(218, 238, 247);
+    width: 15px;
+}
+
+.modalHeader{
+    background-color: rgb(218, 238, 247);
+    color: rgb(40, 96, 144);
+    padding: 10px 150px 10px 150px;
+}
+
+.userPic{
+    background-color: rgb(218, 238, 247);
+}
+
+.modalBody{
+    width: 600px;
+}
+
+.userPic{
+    width: 200px;
+    padding-top: 100px;
+}
+
+.userPic img{
+    border-radius: 50%;;
+}
+
+.modalHeadings{
+    color:  rgb(40, 96, 144);
+}
+
+.modalHeadings2{
+    color:  rgb(40, 96, 144);
+}
+
+
+.partHeading{
+    border-bottom: 2px solid  rgb(40, 96, 144);
+    box-sizing: border-box;
+}
+
+.modalHeadings select{
+    border: none;
+    border-top: 1px solid rgb(223, 217, 217);
+    border-bottom: 1px solid grey;
+    height: 40px;
+    width: 50px;
+}
+
+.modalHeadings select:focus{
+    outline: none;
+}
+
+.modalHeadings2 select{
+    border: none;
+    border-top: 1px solid rgb(223, 217, 217);
+    border-bottom: 1px solid grey;
+    height: 40px;
+    width: 250px;
+}
+
+
+.modalHeadings2 select:focus{
+    outline: none;
+}
+
+
+.modalHeadings input, .dob, .profilePic{
+    border: none;
+    border-top: 1px solid rgb(223, 217, 217);
+    border-bottom: 1px solid grey;
+    height: 40px;
+}
+
+.modalHeadings input:focus{
+    outline: none;
+}
+
+.dob{
+    width: 200px;
+}
+
+.contactPic{
+    border-radius: 500px;
+}
+
+.tableImage{
+    width: 110px;
+}
+
+.tableName{
+    width: 150px;
+}
+
+.tableEmail{
+    width: 150px;
+}
+
+.optionsButton{
+    color: rgb(51, 122, 183);
+    background-color: white;
+    border: 1px solid rgb(51, 122, 183);
+    border-radius: 50px;
+    padding: 2px 20px 2px 20px;
+}
+
+.borderBottom{
+    border-bottom: 1px solid rgb(228, 225, 225);
 }
