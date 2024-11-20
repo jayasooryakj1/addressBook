@@ -21,14 +21,14 @@
             </div>
             <div class="d-flex justify-content-center mt-4">
                 <div class="userCard bg-white d-flex flex-column align-items-center pt-3 pb-4">
-                    <div><img class="userImage" src="assets/images/userDefault.jpg" alt="userDefault" width="70"></div>
+                    <div><cfoutput><img class="userImage" src="#session.userImage#" alt="userDefault" height="70" width="70"></cfoutput></div>
                     <div class="userName mt-4" id="userName"><cfoutput><b>#session.user#</b></cfoutput></div>
                     <button type="button" onclick="createContact()" class="btn btn-primary rounded-pill mt-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                         CREATE CONTACT
                     </button>
                 </div>
                 <div class="modal fade w-100" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <form method="post"  enctype="multipart/form-data">
+                    <form id="contactForm" method="post"  enctype="multipart/form-data">
                         <div class="modal-dialog  modal-lg">
                             <div class="modal-content">
                                 <div class="modal-body p-0 d-flex">
@@ -39,6 +39,9 @@
                                         </div>
                                         <div class="modalHeadings partHeading">
                                             <h5>Personal Contact</h5>
+                                        </div>
+                                        <div class="d-hidden">
+                                            <input type="hidden" id="contactIdHidden" name="contactId">
                                         </div>
                                         <div class="d-flex">
                                             <div class="modalHeadings mt-3">
@@ -121,31 +124,58 @@
                                         <div id="modalError" class="text-center mt-4"></div>
                                     </div>
                                     <div class="userPic text-center">
-                                        <img src="assets/images/excel.png" alt="userPic" width="100">
+                                        <cfoutput><img id="contactCreationImage" class="userImage" src="assets/imageUploads/userDefault.jpg" alt="userDefault" height="70" width="70"></cfoutput>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <input type="submit" name="submit" id="submit" value="submit" onclick="modalValidation()" class="btn btn-primary">
+                                    <input type="submit" name="" id="submit" value="submit" onclick="modalValidation()" class="btn btn-primary">
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
-                <cfif structKeyExists(form, "submit")>
+
+                <cfif structKeyExists(form, "create")>
                     <cfset local.uploadLocation = "./assets/imageUploads/">
-                    <cffile action="upload"
-                            filefield="form.photo"
-                            destination="#expandPath(local.uploadLocation)#"
-                            nameconflict="makeunique"
-                            result="fileName">
-                    <cfset local.contact[photo] = local.uploadLocation&fileName.serverfile>
+                    <cfif structKeyExists(form, "photo") AND len(form.photo)>
+                        <cffile action="upload"
+                                filefield="form.photo"
+                                destination="#expandPath(local.uploadLocation)#"
+                                nameconflict="makeunique"
+                                result="fileName">
+                        <cfset local.contact[photo] = local.uploadLocation&fileName.serverfile>
+                    <cfelse>
+                        <cfset form.photo = "/userDefault.jpg">
+                        <cfset local.contact[photo] = local.uploadLocation&"userDefault.jpg">
+                    </cfif>
                     <cfloop collection="#form#" item="item">
                         <cfset local.contact[item] = form[item]>
                     </cfloop>
                     <cfset local.obj = createObject("component", "components.addressBook")>
                     <cfset local.result = local.obj.contactsEntry(local.contact)>
                 </cfif>
+
+                <cfif structKeyExists(form, "edit")>
+                    <cfset local.uploadLocation = "./assets/imageUploads/">
+                    <cfif structKeyExists(form, "photo") AND len(form.photo)>
+                        <cffile action="upload"
+                                filefield="form.photo"
+                                destination="#expandPath(local.uploadLocation)#"
+                                nameconflict="makeunique"
+                                result="fileName">
+                        <cfset local.contact[photo] = local.uploadLocation&fileName.serverfile>
+                    <cfelse>
+                        <cfset form.photo = "/userDefault.jpg">
+                        <cfset local.contact[photo] = local.uploadLocation&"userDefault.jpg">
+                    </cfif>
+                    <cfloop collection="#form#" item="item">
+                        <cfset local.contact[item] = form[item]>
+                    </cfloop>
+                    <cfset local.obj = createObject("component", "components.addressBook")>
+                    <cfset local.result = local.obj.contactsUpdate(local.contact)>
+                </cfif>
+
                 <div class="contacts bg-white ms-3">
                     <cfset local.value = createObject("component", "components.addressBook")>
                     <cfset local.result = local.value.displayContacts()>
@@ -167,9 +197,9 @@
                                         <td>#local.result.fname# #local.result.lname#</td>
                                         <td>#local.result.email#</td>
                                         <td>#local.result.phoneNumber#</td>
-                                        <td><button class="optionsButton">Edit</button></td>
-                                        <td><button class="optionsButton">Delete</button></td>
-                                        <td><button class="optionsButton">View</button></td>
+                                        <td><button type="button" class="btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##staticBackdrop" value="#local.result.contactId#" name="edit" onclick="editContact(this)">Edit</button></td>
+                                        <td><button class="btn btn-primary optionsButton" value="#local.result.contactId#" name="dlt" onclick="deleteContact(this)" type="button">Delete</button></td>
+                                        <td><button type="button" class="btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##viewModal" value="#local.result.contactId#" name="view" onclick="viewContact(this)">View</button></td>
                                     </tr>
                                 </cfloop>
                             </table>
@@ -178,8 +208,60 @@
                 </div>
             </div>
         </cfif>
+        <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-body d-flex p-0">
+                        <div class="bgBlue"></div>
+                        <div class="viewBody">
+                            <div class="viewHeader mt-5"><h4><b>CONTACT DETAILS</b></h4></div>
+                            <div class="d-flex ms-5 mt-5">
+                                <div class="detailsLabel"><b>Name</b></div>
+                                <div class="detailsLabel2"><b>:</b></div>
+                                <div class="ms-5" id="detailsName"></div>
+                            </div>
+                            <div class="d-flex ms-5 mt-3">
+                                <div class="detailsLabel"><b>Gender</b></div>
+                                <div class="detailsLabel2"><b>:</b></div>
+                                <div class="ms-5" id="detailsGender"></div>
+                            </div>
+                            <div class="d-flex ms-5 mt-3">
+                                <div class="detailsLabel"><b>Date of Birth</b></div>
+                                <div class="detailsLabel2"><b>:</b></div>
+                                <div class="ms-5" id="detailsDob"></div>
+                            </div>
+                            <div class="d-flex ms-5 mt-3">
+                                <div class="detailsLabel"><b>Address</b></div>
+                                <div class="detailsLabel2"><b>:</b></div>
+                                <div class="ms-5" id="detailsAddress"></div>
+                            </div>
+                            <div class="d-flex ms-5 mt-3">
+                                <div class="detailsLabel"><b>Pincode</b></div>
+                                <div class="detailsLabel2"><b>:</b></div>
+                                <div class="ms-5" id="detailsPincode"></div>
+                            </div>
+                            <div class="d-flex ms-5 mt-3">
+                                <div class="detailsLabel"><b>Email Id</b></div>
+                                <div class="detailsLabel2"><b>:</b></div>
+                                <div class="ms-5" id="detailsEmail"></div>
+                            </div>
+                            <div class="d-flex ms-5 mt-3">
+                                <div class="detailsLabel"><b>Phone</b></div>
+                                <div class="detailsLabel2"><b>:</b></div>
+                                <div class="ms-5" id="detailsPhone"></div>
+                            </div>
+                            <div class="text-center my-5">
+                                <button type="button" class="btn btn-secondary viewClose" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                        <div class="viewContactPic text-center"><img id="contactProfilePic" alt="profile pic" width="100" height="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
-        <script src="js/script.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="js/script.js"></script>
     </body>
 </html>

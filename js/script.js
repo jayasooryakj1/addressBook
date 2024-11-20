@@ -73,4 +73,71 @@ function modalValidation() {
 
 function createContact(){
     document.getElementById("modalHeadingChange").innerHTML="CREATE CONTACT"
+    document.getElementById("contactForm").reset()
+    document.getElementById("contactCreationImage").src="assets/imageUploads/userDefault.jpg"
+    document.getElementById("submit").name="create"
+}
+
+function deleteContact(dltObj){
+    if(confirm("Delete contact?")){
+        $.ajax({
+            type:"post",
+            url:"components/addressBook.cfc?method=deleteFunction",
+            data:{dlt:dltObj.value},
+            success:function(result){
+                if(result){
+                    location.reload();
+                }
+            }
+        })
+    }
+}
+
+function viewContact(viewId)
+{
+    $.ajax({
+        type:"POST",
+        url:"./Components/addressBook.cfc?method=viewContact",
+        data:{viewId:viewId.value},
+        success: function(result) {
+            var resultStruct=JSON.parse(result);
+            document.getElementById("detailsName").innerHTML=resultStruct.name
+            document.getElementById("detailsGender").innerHTML=resultStruct.gender
+            document.getElementById("detailsDob").innerHTML=resultStruct.dob
+            document.getElementById("contactProfilePic").src=resultStruct.photo
+            document.getElementById("detailsAddress").innerHTML=resultStruct.address
+            document.getElementById("detailsPincode").innerHTML=resultStruct.pincode
+            document.getElementById("detailsEmail").innerHTML=resultStruct.email
+            document.getElementById("detailsPhone").innerHTML=resultStruct.phn
+        }
+    });
+}
+
+function editContact(editId)
+{
+    document.getElementById("submit").name="edit"
+    document.getElementById("modalHeadingChange").innerHTML="EDIT CONTACT"
+    $.ajax({
+        type:"POST",
+        url:"./Components/addressBook.cfc?method=editContact",
+        data:{editId:editId.value},
+        success: function(result) {
+            var resultStruct=JSON.parse(result);
+            document.getElementById("contactIdHidden").value=resultStruct.contactId
+            document.getElementById("title").value=resultStruct.title
+            document.getElementById("fname").value=resultStruct.fname
+            document.getElementById("lname").value=resultStruct.lname
+            document.getElementById("gender").value=resultStruct.gender
+            document.getElementById("dob").value=resultStruct.dob
+            document.getElementById("contactCreationImage").src=resultStruct.photo
+            document.getElementById("address").value=resultStruct.address
+            document.getElementById("street").value=resultStruct.street
+            document.getElementById("district").value=resultStruct.district
+            document.getElementById("state").value=resultStruct.state
+            document.getElementById("country").value=resultStruct.country
+            document.getElementById("pincode").value=resultStruct.pincode
+            document.getElementById("email").value=resultStruct.email
+            document.getElementById("phoneNumber").value=resultStruct.phoneNumber
+        }
+    });
 }

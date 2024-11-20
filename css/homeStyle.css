@@ -30,6 +30,7 @@
 
 .contacts{
     width: 69vw;
+    height: 100%;
 }
 
 .createContact button{
@@ -153,4 +154,33 @@
 
 .borderBottom{
     border-bottom: 1px solid rgb(228, 225, 225);
+}
+
+.viewHeader{
+    color: rgb(51, 122, 183);
+    background-color: rgb(218, 238, 247);
+    padding: 10px 100px 10px 100px;
+    width: 500px;
+    margin: 50px 50px 20px 50px;
+}
+
+.viewContactPic{
+    background-color: rgb(218, 238, 247);
+    width: 185px;
+    padding-top: 100px;
+}
+
+.detailsLabel, .detailsLabel2{
+    color: rgb(51, 122, 183);
+}
+
+.detailsLabel{
+    width: 150px;
+}
+
+.viewClose{
+    background-color: rgb(51, 122, 183);
+    width: 100px;
+    border: none;
+    border-radius: 50px;
 }

@@ -31,15 +31,20 @@
                     <div><input name="submit" class="mt-3 register" type="submit" value="REGISTER" onclick="signupValidation(event)"></div>
                 </form>
                 <div id="error"></div>
-                <cfset local.uploadLocation = expandPath("./assets/imageUploads/")>
+                <cfset local.uploadLocation = "./assets/imageUploads/">
                 <cfif structKeyExists(form, "submit")>
-                    <cffile action="upload"
-                        filefield="form.userImage"
-                        destination="#local.uploadLocation#"
-                        nameconflict="makeunique"
-                        result="fileName">
-                    <cfset local.value = createObject("component", "components.addressBook")>
-                    <cfset local.result = local.value.signup(form.fullName, form.email, form.userName, fileName.serverfile, form.password)>
+                    <cfif structKeyExists(form, "userImage") AND len(form.userImage)>
+                        <cffile action="upload"
+                            filefield="form.userImage"
+                            destination="#expandPath(local.uploadLocation)#"
+                            nameconflict="makeunique"
+                            result="fileName">
+                        <cfset local.value = createObject("component", "components.addressBook")>
+                        <cfset local.result = local.value.signup(form.fullName, form.email, form.userName, fileName.serverfile, form.password)>
+                    <cfelse>
+                        <cfset local.value = createObject("component", "components.addressBook")>
+                        <cfset local.result = local.value.signup(form.fullName, form.email, form.userName, "/userDefault.jpg", form.password)>
+                    </cfif>
                     <div class="mt-2">
                         <cfoutput>
                             #local.result#
