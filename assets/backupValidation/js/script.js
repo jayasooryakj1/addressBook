@@ -41,7 +41,6 @@ function loginValidation() {
 }
 
 function modalValidation() {
-    document.getElementById("modalError").innerHTML=""
     var title = document.getElementById("title").value;
     var fname = document.getElementById("fname").value;
     var lname = document.getElementById("lname").value;
@@ -70,21 +69,6 @@ function modalValidation() {
         document.getElementById("modalError").style.color="red"
         event.preventDefault();
     }
-    $.ajax({
-        type:"POST",
-        url:"./components/addressBook.cfc?method=emailExist",
-        data:{existentEmail:email, existentNumber:phoneNumber},
-        success:function(result){
-            if(result){
-                alert("Email or phone number already exists")
-                document.getElementById("submit").type="button"
-                event.preventDefault()
-            }
-            else{
-                document.getElementById("submit").type="submit"
-            }
-        }
-    })
 }
 
 function createContact(){
@@ -113,7 +97,7 @@ function viewContact(viewId)
 {
     $.ajax({
         type:"POST",
-        url:"./components/addressBook.cfc?method=viewContact",
+        url:"./Components/addressBook.cfc?method=viewContact",
         data:{viewId:viewId.value},
         success: function(result) {
             var resultStruct=JSON.parse(result);
@@ -169,15 +153,6 @@ function logOut(){
                     location.reload();
                 }
             }
-        })
-    }
-}
-
-function spreadsheetDownload() {
-    if(confirm("Download .xlsx file?")){
-        $.ajax({
-            type:"post",
-            url:"components/addressBook.cfc?method=spreadsheetDownload"
         })
     }
 }

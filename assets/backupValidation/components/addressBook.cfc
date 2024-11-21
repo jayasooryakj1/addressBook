@@ -175,28 +175,13 @@
         <cfreturn true>
     </cffunction>
 
-    <cffunction  name="spreadsheetDownload" access="remote">
+    <cffunction  name="spreadsheetDownload">
         <cfquery name="downloadSpreadsheet">
             select title, fname, lname, gender, dob, address, street, district, state, country, pincode, email, phoneNumber from contacts where _createdBy=<cfqueryparam value='#session.user#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
-        <cfset local.spreadsheetName = CreateUUID()&".xlsx">
-        <cfset local.filePath = ExpandPath("../spreadsheetDownloads/"&local.spreadsheetName)>
-        <cfspreadsheet action="write" query="downloadSpreadsheet" filename="#local.filePath#" overwrite="yes">
-        <cfreturn true>
-    </cffunction>
-
-    <cffunction  name="emailExist" access="remote">
-        <cfargument  name="existentEmail">
-        <cfargument  name="existentNumber">
-        <cfquery name="email">
-            select count(email) as countEmail from contacts where email=<cfqueryparam value='#arguments.existentEmail#' cfsqltype="CF_SQL_VARCHAR">
-        </cfquery>
-        <cfquery name="number">
-            select count(phoneNumber) as countNumber from contacts where phoneNumber=<cfqueryparam value='#arguments.existentNumber#' cfsqltype="CF_SQL_VARCHAR">
-        </cfquery>
-        <cfif email.countEmail or number.countNumber>
-            <cfreturn true>
-        </cfif>
+        <cfset local.spreadsheetName = CreateUUID() &".xlsx">
+        <cfset local.filePath = ExpandPath("./spreadSheetDownloads/"&local.spreadsheetName)>
+        <cfspreadsheet action="write" query="downloadSpreadsheet" filename="#local.filePath#" overwrite="no">
     </cffunction>
 
 </cfcomponent>
