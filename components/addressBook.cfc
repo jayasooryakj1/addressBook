@@ -12,8 +12,11 @@
         <cfquery name="query">
             select count(userName) as count from users where userName=<cfqueryparam value='#arguments.userName#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
-        <cfif query.count GT 0>
-            <cfset local.result = "Username already exists">
+        <cfquery name="queryEmail">
+            select count(email) as countEmail from users where userName=<cfqueryparam value='#arguments.userName#' cfsqltype="CF_SQL_VARCHAR">
+        </cfquery>
+        <cfif query.count GT 0 or queryEmail.countEmail GT 0>
+            <cfset local.result = "Username or email already exists">
         <cfelse>
             <cfquery name="insertValues">
                 insert into users (fullName, email, userName, userImage, pwd) values(
@@ -40,7 +43,7 @@
             <cfset local.result = "Invalid username">
         <cfelse>
             <cfquery name="pass">
-                select pwd, userImage from users where userName=<cfqueryparam value='#arguments.userName#'>
+                select email, pwd, userImage from users where userName=<cfqueryparam value='#arguments.userName#'>
             </cfquery>
             <cfif pass.pwd != local.hashedPassword>
                 <cfset local.result = "Incorrect password">
@@ -48,6 +51,7 @@
                 <cfset local.result = "true">
                 <cfset session.user = arguments.userName>
                 <cfset session.userImage = pass.userImage>
+                <cfset session.email = pass.email>
             </cfif>
         </cfif>
         <cfreturn local.result>
@@ -168,6 +172,7 @@
                 _updatedOn=<cfqueryparam value='#local.today#' cfsqltype="CF_SQL_DATE">
             where contactId='#contactUpdate["contactId"]#'
         </cfquery>
+        <cflocation  url="home.cfm">
     </cffunction>
 
     <cffunction  name="logoutFunction" access="remote">
@@ -185,18 +190,36 @@
         <cfreturn true>
     </cffunction>
 
-    <cffunction  name="emailExist" access="remote">
-        <cfargument  name="existentEmail">
-        <cfargument  name="existentNumber">
-        <cfquery name="email">
-            select count(email) as countEmail from contacts where email=<cfqueryparam value='#arguments.existentEmail#' cfsqltype="CF_SQL_VARCHAR">
+    <cffunction name="emailExist" access="remote">
+        <cfargument name="existentEmail">
+        <cfargument name="existentNumber">
+        <cfargument name="contactId" default="">
+        <cfquery name="qry">
+            select email, contactId from contacts where email=<cfqueryparam value='#arguments.existentEmail#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
+        <cfloop query="qry">
+            <cfif qry.contactId NEQ arguments.contactId>
+                <cfreturn true>
+            </cfif>
+        </cfloop>
         <cfquery name="number">
-            select count(phoneNumber) as countNumber from contacts where phoneNumber=<cfqueryparam value='#arguments.existentNumber#' cfsqltype="CF_SQL_VARCHAR">
+            select phoneNumber, contactId from contacts where phoneNumber=<cfqueryparam value='#arguments.existentNumber#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
-        <cfif email.countEmail or number.countNumber>
+        <cfloop query="number">
+            <cfif number.contactId NEQ arguments.contactId>
+                <cfreturn true>
+            </cfif>
+        </cfloop>
+        <cfif session.email EQ arguments.existentEmail>
             <cfreturn true>
         </cfif>
+    </cffunction>
+
+    <cffunction  name="pdfDownloader">
+        <cfquery name="pdfDownloadQry">
+            select photo, title, fname, lname, gender, dob, address, street, district, state, country, pincode, email, phoneNumber from contacts where _createdBy=<cfqueryparam value='#session.user#' cfsqltype="CF_SQL_VARCHAR">
+        </cfquery>
+        <cfreturn pdfDownloadQry>
     </cffunction>
 
 </cfcomponent>

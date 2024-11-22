@@ -55,6 +55,7 @@ function modalValidation() {
     var pincode = document.getElementById("pincode").value;
     var email = document.getElementById("email").value;
     var phoneNumber = document.getElementById("phoneNumber").value;
+    var contactId = document.getElementById("contactIdHidden").value;
     if(title==""||fname==""||lname==""||gender==""||dob==""||address==""||street==""||district==""||state==""||country==""||pincode==""||email==""||phoneNumber==""){
         document.getElementById("modalError").innerHTML="*Enter all the fields*"
         document.getElementById("modalError").style.color="red"
@@ -73,7 +74,7 @@ function modalValidation() {
     $.ajax({
         type:"POST",
         url:"./components/addressBook.cfc?method=emailExist",
-        data:{existentEmail:email, existentNumber:phoneNumber},
+        data:{existentEmail:email, existentNumber:phoneNumber, contactId:contactId},
         success:function(result){
             if(result){
                 alert("Email or phone number already exists")
@@ -131,6 +132,8 @@ function viewContact(viewId)
 
 function editContact(editId)
 {
+    document.getElementById("contactForm").reset()
+    var editContactId= document.getElementById("editButton").value
     document.getElementById("submit").name="edit"
     document.getElementById("modalHeadingChange").innerHTML="EDIT CONTACT"
     $.ajax({
@@ -180,4 +183,26 @@ function spreadsheetDownload() {
             url:"components/addressBook.cfc?method=spreadsheetDownload"
         })
     }
+}
+
+function pdfDownloadAlert(){
+    if(confirm("Download .pdf file?")){
+        return true
+    }
+    else{
+        return false
+    }
+}
+
+function printFunction(){
+    var page=document.body.innerHTML
+    var print=document.getElementById("printSection").innerHTML
+    document.body.innerHTML=print
+    window.print()
+    document.body.innerHTML-page
+    location.reload()
+}
+
+function closeModal(){
+    document.getElementById("modalError").innerHTML=""
 }
