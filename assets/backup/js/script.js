@@ -17,56 +17,17 @@ function signupValidation(event) {
         }
     }
 
-    if(email==""){
-        document.getElementById("errorEmail").innerHTML="Enter email"
+    if(fullName==""||email==""||userName==""||pwd==""||cfPwd==""){
+        document.getElementById("error").innerHTML="Enter all the fields"
         event.preventDefault();
     }
-    else{
-        document.getElementById("errorEmail").innerHTML=""
-    }
-
-    if(userName==""){
-        document.getElementById("errorUserName").innerHTML="Enter User name"
-        event.preventDefault();
-    }
-    else{
-        document.getElementById("errorUserName").innerHTML=""
-    }
-
-    if(fullName==""){
-        document.getElementById("errorName").innerHTML="Enter Name"
-        event.preventDefault();
-    }
-    else{
-        document.getElementById("errorName").innerHTML=""
-    }
-
-    if(pwd==""){
-        document.getElementById("errorPwd").innerHTML="Enter Password"
-        event.preventDefault();
-    }
-    else{
-        document.getElementById("errorPwd").innerHTML=""
-    }
-
-    if(cfPwd==""){
-        document.getElementById("errorPwd2").innerHTML="Renter Password"
-        event.preventDefault();
-    }
-    else{
-        document.getElementById("errorPwd2").innerHTML=""
-    }
-
-    if(pwd!=cfPwd){
+    else if(pwd!=cfPwd){
         document.getElementById("error").innerHTML="Password mismatch"
         event.preventDefault();
     }
     else if(pwd.length<8){
         document.getElementById("error").innerHTML="Password must be minimum 8 characters long"
         event.preventDefault();
-    }
-    else{
-        document.getElementById("error").innerHTML=""
     }
 }
 

@@ -25,14 +25,14 @@ body{
 .leftSign{
     background-color: rgb(51, 122, 183);
     width: 200px;
-    height: 595px;
+    height: 500px;
     border-radius: 20px 0px 0px 20px;
 }
 
 .rightSign{
     background-color: white;
     width: 450px;
-    height: 595px;
+    height: 500px;
     border-radius: 0px 20px 20px 0px;
     font-size: 13px;
 }
@@ -112,8 +112,4 @@ body{
     border-radius: 20px;
     background-color: white;
     padding: 5px 100px 5px 100px;
-}
-
-.red{
-    color: red;
 }
