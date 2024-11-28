@@ -5,7 +5,7 @@
 
     <cffunction name="onRequest" >
         <cfargument  name="requestedpage">
-        <cfset local.excludedPages=["/addressBook/index.cfm","/addressBook/signup.cfm"]>
+        <cfset local.excludedPages=["/index.cfm","/signup.cfm", "/googleSignup.cfm", "/birthday.cfm"]>
         <cfif arrayFind(local.excludedPages,arguments.requestedpage)>
             <cfinclude  template="#arguments.requestedpage#">
         <cfelse>

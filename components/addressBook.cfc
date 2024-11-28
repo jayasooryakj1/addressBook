@@ -13,7 +13,7 @@
             select count(userName) as count from users where userName=<cfqueryparam value='#arguments.userName#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
         <cfquery name="queryEmail">
-            select count(email) as countEmail from users where userName=<cfqueryparam value='#arguments.userName#' cfsqltype="CF_SQL_VARCHAR">
+            select count(email) as countEmail from users where email=<cfqueryparam value='#arguments.email#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
         <cfif query.count GT 0 or queryEmail.countEmail GT 0>
             <cfset local.result = "Username or email already exists">
@@ -43,13 +43,14 @@
             <cfset local.result = "Invalid username">
         <cfelse>
             <cfquery name="pass">
-                select email, pwd, userImage from users where userName=<cfqueryparam value='#arguments.userName#'>
+                select email, pwd, userImage, userId from users where userName=<cfqueryparam value='#arguments.userName#'>
             </cfquery>
             <cfif pass.pwd != local.hashedPassword>
                 <cfset local.result = "Incorrect password">
             <cfelse>
                 <cfset local.result = "true">
                 <cfset session.user = arguments.userName>
+                <cfset session.userid = pass.userId>
                 <cfset session.userImage = pass.userImage>
                 <cfset session.email = pass.email>
             </cfif>
@@ -77,8 +78,8 @@
                 <cfqueryparam value='#arguments.contactStruct["pincode"]#' cfsqltype="CF_SQL_VARCHAR">,
                 <cfqueryparam value='#arguments.contactStruct["email"]#' cfsqltype="CF_SQL_VARCHAR">,
                 <cfqueryparam value='#arguments.contactStruct["phoneNumber"]#' cfsqltype="CF_SQL_VARCHAR">,
-                <cfqueryparam value='#session.user#' cfsqltype="CF_SQL_VARCHAR">,
-                <cfqueryparam value='#session.user#' cfsqltype="CF_SQL_VARCHAR">,
+                <cfqueryparam value='#session.userid#' cfsqltype="CF_SQL_VARCHAR">,
+                <cfqueryparam value='#session.userid#' cfsqltype="CF_SQL_VARCHAR">,
                 <cfqueryparam value='#local.today#' cfsqltype="CF_SQL_DATE">,
                 <cfqueryparam value='#local.today#' cfsqltype="CF_SQL_DATE">
             )
@@ -87,7 +88,7 @@
 
     <cffunction  name="displayContacts" returnType="query">
         <cfquery name="contacts">
-            select photo, fname, lname, email, phoneNumber, contactId from contacts where _createdBy=<cfqueryparam value='#session.user#' cfsqltype="CF_SQL_VARCHAR">
+            select photo, fname, lname, email, phoneNumber, contactId from contacts where _createdBy=<cfqueryparam value='#session.userid#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
         <cfreturn "#contacts#">
     </cffunction>
@@ -220,6 +221,54 @@
             select photo, title, fname, lname, gender, dob, address, street, district, state, country, pincode, email, phoneNumber from contacts where _createdBy=<cfqueryparam value='#session.user#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
         <cfreturn pdfDownloadQry>
+    </cffunction>
+
+    <cffunction  name="googleLogin">
+        <cfargument  name="googleStruct">
+        <cfquery name="googleProfile">
+            select count(email) as emailCount from users where email='#arguments.googleStruct.other.email#'
+        </cfquery>
+        <cfif googleProfile.emailCount GT 0>
+            <cfquery name="googleCred">
+                select userName, userid from users where email='#arguments.googleStruct.other.email#'
+            </cfquery>
+            <cfset session.userId = googleCred.userId>
+            <cfset session.user = googleCred.userName>
+            <cfset session.userImage = arguments.googleStruct.other.picture>
+            <cfset session.email = arguments.googleStruct.other.email>
+            <cflocation  url="home.cfm">
+        <cfelse>
+            <cfquery name="addGoogle">
+                insert into users (email, userName, userImage) values(
+                    <cfqueryparam value='#arguments.googleStruct.other.email#' cfsqltype="CF_SQL_VARCHAR">,
+                    <cfqueryparam value='#arguments.googleStruct.other.given_name#' cfsqltype="CF_SQL_VARCHAR">,
+                    <cfqueryparam value='#arguments.googleStruct.other.picture#' cfsqltype="CF_SQL_VARCHAR">
+                )
+            </cfquery>
+            <cfquery name="sessionId">
+                select userId from users where email = <cfqueryparam value='#arguments.googleStruct.other.email#' cfsqltype="CF_SQL_VARCHAR">
+            </cfquery>
+            <cfset session.userId = sessionId.userId>
+            <cfset session.user = arguments.googleStruct.other.given_name>
+            <cfset session.userImage = arguments.googleStruct.other.picture>
+            <cfset session.email = arguments.googleStruct.other.email>
+            <cflocation  url="home.cfm">
+        </cfif>
+    </cffunction>
+
+    <cffunction  name="birthday" access="public">
+        <cfset local.today = dateFormat(now(), "yyyy/mm/dd")>
+        <cfset local.birthdayToday= "">
+        <cfquery name="findBirthday">
+            select fname, email from contacts where dob= '#local.today#'
+        </cfquery>
+        <cfif findBirthday.recordcount GT 0>
+            <cfloop query="findBirthday">
+                <cfmail  from="jayasooryakj420@gmail.com"  subject="Happy Birthday #findBirthday.fname# !!"  to="#findBirthday.email#">
+                    Happy Birthday
+                </cfmail>
+            </cfloop>
+        </cfif>
     </cffunction>
 
 </cfcomponent>

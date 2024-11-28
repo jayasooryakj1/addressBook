@@ -117,3 +117,8 @@ body{
 .red{
     color: red;
 }
+
+.googleButton{
+    border: none;
+    background-color: white;
+}

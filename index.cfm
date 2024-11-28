@@ -25,12 +25,14 @@
                     <div><input class="userInputs px-4 mt-5" id="userName" name="userName" type="text" placeholder="Username"></div>
                     <div><input class="userInputs px-4 mt-5" id="pwd" name="password" type="password" placeholder="Password"></div>
                     <div><input class="loginButton bg-white mt-5" type="submit" name="submit" onclick="loginValidation()" value="LOGIN"></div>
+                    <div class="signInText mt-2">Or Sign In Using</div>
+                    <div class="d-flex justify-content-center mt-3">
+                        <div><img src="assets/images/facebook.png" alt="facebookLogo" width="40"></div>
+                        <div>
+                            <a href="googleSignup.cfm" class="ms-2"><img src="assets/images/gmail.png" alt="gmailLogo" width="40"></a>
+                        </div>
+                    </div>
                 </form>
-                <div class="signInText mt-2">Or Sign In Using</div>
-                <div class="d-flex mt-3">
-                    <div><img src="assets/images/facebook.png" alt="facebookLogo" width="40"></div>
-                    <div><img class="ms-2" src="assets/images/gmail.png" alt="gmailLogo" width="40"></div>
-                </div>
                 <div class="regLink mt-4">
                     Don't have an account? <a href="signup.cfm">Register Here</a>
                 </div>
@@ -50,14 +52,6 @@
                 </div>
             </cfif>
         </cfif>
-
-        <cfoauth
-            type = "Google"
-            
-            result = "result"
-            redirecturi = ""
-        >
-
         <script src="js/script.js"></script>
     </body>
 </html>
