@@ -1,5 +1,6 @@
 <cfcomponent>
     
+    <cfset this.ormEnabled = true>
     <cfset this.sessionmanagement="true">
     <cfset this.datasource = "dataSource1">
 

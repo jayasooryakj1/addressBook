@@ -230,12 +230,25 @@
                                     <th></th>
                                     <th></th>
                                 </tr>
-                                <cfloop query="#local.result#">
+                                <!---<cfloop query="#local.result#">
                                     <tr class="borderBottom">
                                         <td class="text-center pt-3 pb-3"><img src="#local.result.photo#" height="70" width="70" class="contactPic"></td>
                                         <td>#local.result.fname# #local.result.lname#</td>
                                         <td>#local.result.email#</td>
                                         <td>#local.result.phoneNumber#</td>
+                                        <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##staticBackdrop" value="#local.result.contactId#" name="edit" id="editButton" onclick="editContact(this)">Edit</button></td>
+                                        <td><button class="printHidden btn btn-primary optionsButton" value="#local.result.contactId#" name="dlt" onclick="deleteContact(this)" type="button">Delete</button></td>
+                                        <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##viewModal" value="#local.result.contactId#" name="view" onclick="viewContact(this)">View</button></td>
+                                    </tr>
+                                </cfloop>--->
+                                <cfset ormReload()>
+                                <cfset local.var = entityLoad("contacts", {_createdBy=#session.userid#})>
+                                <cfloop array="#local.var#" item="item">
+                                    <tr class="borderBottom">
+                                        <td class="text-center pt-3 pb-3"><img src="#item.getphoto()#" height="70" width="70" class="contactPic"></td>
+                                        <td>#item.getfname()# #item.getlname()#</td>
+                                        <td>#item.getemail()#</td>
+                                        <td>#item.getphoneNumber()#</td>
                                         <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##staticBackdrop" value="#local.result.contactId#" name="edit" id="editButton" onclick="editContact(this)">Edit</button></td>
                                         <td><button class="printHidden btn btn-primary optionsButton" value="#local.result.contactId#" name="dlt" onclick="deleteContact(this)" type="button">Delete</button></td>
                                         <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##viewModal" value="#local.result.contactId#" name="view" onclick="viewContact(this)">View</button></td>

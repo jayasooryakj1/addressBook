@@ -9,6 +9,7 @@
     <cflogin>
         <cfoauth
             type = "Google"
+            
             result = "result"
             redirecturi = ""
             scope="email"

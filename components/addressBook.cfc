@@ -256,19 +256,35 @@
         </cfif>
     </cffunction>
 
-    <cffunction  name="birthday" access="public">
-        <cfset local.today = dateFormat(now(), "yyyy/mm/dd")>
+    <cffunction  name="birthday" access="remote">
+        <cfset local.today = dateFormat(now(), "mm/dd")>
         <cfset local.birthdayToday= "">
         <cfquery name="findBirthday">
-            select fname, email from contacts where dob= '#local.today#'
+            select fname, email, dob from contacts
         </cfquery>
         <cfif findBirthday.recordcount GT 0>
             <cfloop query="findBirthday">
-                <cfmail  from="jayasooryakj420@gmail.com"  subject="Happy Birthday #findBirthday.fname# !!"  to="#findBirthday.email#">
-                    Happy Birthday
-                </cfmail>
+                <cfif dateFormat(findbirthday.dob, "mm/dd") EQ "#local.today#">
+                    <cfmail  from="jayasooryakj420@gmail.com"  subject="Happy Birthday #findBirthday.fname# !!"  to="#findBirthday.email#">
+                        Happy Birthday
+                    </cfmail>
+                </cfif>
             </cfloop>
         </cfif>
     </cffunction>
 
+    <cffunction  name="birthdayCall">
+        <cfschedule 
+            action="update" 
+            task="birthday" 
+            operation="HTTPRequest"
+            url="http://addressbook.org/birthday.cfm"  
+            startDate="#dateFormat(now(), 'yyyy-MM-dd')#"
+            file="log.txt" 
+            startTime="00:00"  
+            interval="daily" 
+            repeat="0"
+        >
+        </cfschedule>
+    </cffunction>
 </cfcomponent>

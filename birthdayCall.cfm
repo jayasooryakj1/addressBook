@@ -7,7 +7,7 @@
     </head>
     <body>
         <cfobject component="components.addressBook" name="birthdayService">
-        <cfset birthdayService.birthday()>
+        <cfset birthdayService.birthdayCall()>
         
     </body>
 </html>
