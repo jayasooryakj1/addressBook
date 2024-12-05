@@ -26,8 +26,8 @@
 
         <!--- PDF BODY --->
         <cfif structKeyExists(form, "pdfDownload")>
-            <cfset local.pdfObj = createObject("component", "components.addressBook")>
-            <cfset local.result = local.pdfObj.pdfDownloader()>
+            <cfset pdfObj = createObject("component", "components.addressBook")>
+            <cfset result = pdfObj.pdfDownloader()>
             <cfdocument  format="pdf" overwrite="yes" fileName="pdfDownload/downloadedPdf.pdf" orientation="landscape">
                 <table border="1">
                     <tr>
@@ -47,22 +47,22 @@
                         <th>phoneNumber</th>
                     </tr>
                     <cfoutput>
-                        <cfloop query="#local.result#">
+                        <cfloop query="#result#">
                             <tr>
-                                <td><img src="#local.result.photo#" width="30"></td>
-                                <td>#local.result.title#</td>
-                                <td>#local.result.fname#</td>
-                                <td>#local.result.lname#</td>
-                                <td>#local.result.gender#</td>
-                                <td>#local.result.dob#</td>
-                                <td>#local.result.address#</td>
-                                <td>#local.result.street#</td>
-                                <td>#local.result.district#</td>
-                                <td>#local.result.state#</td>
-                                <td>#local.result.country#</td>
-                                <td>#local.result.pincode#</td>
-                                <td>#local.result.email#</td>
-                                <td>#local.result.phoneNumber#</td>
+                                <td><img src="#result.photo#" width="30"></td>
+                                <td>#result.title#</td>
+                                <td>#result.fname#</td>
+                                <td>#result.lname#</td>
+                                <td>#result.gender#</td>
+                                <td>#result.dob#</td>
+                                <td>#result.address#</td>
+                                <td>#result.street#</td>
+                                <td>#result.district#</td>
+                                <td>#result.state#</td>
+                                <td>#result.country#</td>
+                                <td>#result.pincode#</td>
+                                <td>#result.email#</td>
+                                <td>#result.phoneNumber#</td>
                             </tr>
                         </cfloop>
                     </cfoutput>
@@ -194,29 +194,31 @@
 
             <!--- CREATE --->
             <cfif structKeyExists(form, "create")>
-                <cfset local.uploadLocation = "./assets/imageUploads/">
+                <cfset uploadLocation = "./assets/imageUploads/">
                 <cfif structKeyExists(form, "photo") AND len(form.photo)>
                     <cffile action="upload"
                             filefield="form.photo"
-                            destination="#expandPath(local.uploadLocation)#"
+                            destination="#expandPath(uploadLocation)#"
                             nameconflict="makeunique"
                             result="fileName">
-                    <cfset local.contact[photo] = local.uploadLocation&fileName.serverfile>
+                    <cfset contact[photo] = uploadLocation&fileName.serverfile>
                 <cfelse>
                     <cfset form.photo = "/userDefault.jpg">
-                    <cfset local.contact[photo] = local.uploadLocation&"#form.photo#">
+                    <cfset contact[photo] = uploadLocation&"#form.photo#">
                 </cfif>
                 <cfloop collection="#form#" item="item">
-                    <cfset local.contact[item] = form[item]>
+                    <cfset contact[item] = form[item]>
                 </cfloop>
-                <cfset local.obj = createObject("component", "components.addressBook")>
-                <cfset local.result = local.obj.contactsEntry(local.contact)>
+                <cfset obj = createObject("component", "components.addressBook")>
+                <cfset result = obj.contactsEntry(
+                    contactStruct = contact
+                )>
             </cfif>
 
             <!--- DISPLAY CONTACTS --->
             <div class="contacts bg-white ms-3">
-                <cfset local.value = createObject("component", "components.addressBook")>
-                <cfset local.result = local.value.displayContacts()>
+                <cfset value = createObject("component", "components.addressBook")>
+                <cfset result = value.displayContacts()>
                 <div id="printSection">
                     <form method="post">
                         <cfoutput>
@@ -230,28 +232,28 @@
                                     <th></th>
                                     <th></th>
                                 </tr>
-                                <!---<cfloop query="#local.result#">
+                                <!---<cfloop query="#result#">
                                     <tr class="borderBottom">
-                                        <td class="text-center pt-3 pb-3"><img src="#local.result.photo#" height="70" width="70" class="contactPic"></td>
-                                        <td>#local.result.fname# #local.result.lname#</td>
-                                        <td>#local.result.email#</td>
-                                        <td>#local.result.phoneNumber#</td>
-                                        <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##staticBackdrop" value="#local.result.contactId#" name="edit" id="editButton" onclick="editContact(this)">Edit</button></td>
-                                        <td><button class="printHidden btn btn-primary optionsButton" value="#local.result.contactId#" name="dlt" onclick="deleteContact(this)" type="button">Delete</button></td>
-                                        <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##viewModal" value="#local.result.contactId#" name="view" onclick="viewContact(this)">View</button></td>
+                                        <td class="text-center pt-3 pb-3"><img src="#result.photo#" height="70" width="70" class="contactPic"></td>
+                                        <td>#result.fname# #result.lname#</td>
+                                        <td>#result.email#</td>
+                                        <td>#result.phoneNumber#</td>
+                                        <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##staticBackdrop" value="#result.contactId#" name="edit" id="editButton" onclick="editContact(this)">Edit</button></td>
+                                        <td><button class="printHidden btn btn-primary optionsButton" value="#result.contactId#" name="dlt" onclick="deleteContact(this)" type="button">Delete</button></td>
+                                        <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##viewModal" value="#result.contactId#" name="view" onclick="viewContact(this)">View</button></td>
                                     </tr>
                                 </cfloop>--->
                                 <cfset ormReload()>
-                                <cfset local.var = entityLoad("contacts", {_createdBy=#session.userid#})>
-                                <cfloop array="#local.var#" item="item">
+                                <cfset var = entityLoad("contacts", {_createdBy=#session.userid#})>
+                                <cfloop array="#var#" item="item">
                                     <tr class="borderBottom">
                                         <td class="text-center pt-3 pb-3"><img src="#item.getphoto()#" height="70" width="70" class="contactPic"></td>
                                         <td>#item.getfname()# #item.getlname()#</td>
                                         <td>#item.getemail()#</td>
                                         <td>#item.getphoneNumber()#</td>
-                                        <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##staticBackdrop" value="#local.result.contactId#" name="edit" id="editButton" onclick="editContact(this)">Edit</button></td>
-                                        <td><button class="printHidden btn btn-primary optionsButton" value="#local.result.contactId#" name="dlt" onclick="deleteContact(this)" type="button">Delete</button></td>
-                                        <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##viewModal" value="#local.result.contactId#" name="view" onclick="viewContact(this)">View</button></td>
+                                        <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##staticBackdrop" value="#result.contactId#" name="edit" id="editButton" onclick="editContact(this)">Edit</button></td>
+                                        <td><button class="printHidden btn btn-primary optionsButton" value="#result.contactId#" name="dlt" onclick="deleteContact(this)" type="button">Delete</button></td>
+                                        <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##viewModal" value="#result.contactId#" name="view" onclick="viewContact(this)">View</button></td>
                                     </tr>
                                 </cfloop>
                             </table>
@@ -263,22 +265,24 @@
 
         <!--- EDIT --->
             <cfif structKeyExists(form, "edit")>
-                <cfset local.uploadLocation = "./assets/imageUploads/">
+                <cfset uploadLocation = "./assets/imageUploads/">
                 <cfif structKeyExists(form, "photo") AND len(form.photo)>
                     <cffile action="upload"
                             filefield="form.photo"
-                            destination="#expandPath(local.uploadLocation)#"
+                            destination="#expandPath(uploadLocation)#"
                             nameconflict="makeunique"
                             result="fileName">
-                    <cfset local.contact[photo] = local.uploadLocation&fileName.serverfile>
+                    <cfset contact[photo] = uploadLocation&fileName.serverfile>
                 <cfelse>
-                    <cfset local.contact[photo] = "#form.imgHidden#">
+                    <cfset contact[photo] = "#form.imgHidden#">
                 </cfif>
                 <cfloop collection="#form#" item="item">
-                    <cfset local.contact[item] = form[item]>
+                    <cfset contact[item] = form[item]>
                 </cfloop>
-                <cfset local.obj = createObject("component", "components.addressBook")>
-                <cfset local.result = local.obj.contactsUpdate(local.contact)>
+                <cfset obj = createObject("component", "components.addressBook")>
+                <cfset result = obj.contactsUpdate(
+                    contactUpdate = contact
+                )>
             </cfif>
         
         <!--- VIEW MODAL --->
