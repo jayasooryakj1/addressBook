@@ -36,23 +36,29 @@
                     <div><input name="submit" class="mt-3 register" type="submit" value="REGISTER" onclick="signupValidation(event)"></div>
                 </form>
                 <div id="error" class="red"></div>
-                <cfset local.uploadLocation = "./assets/imageUploads/">
+                <cfset uploadLocation = "./assets/imageUploads/">
                 <cfif structKeyExists(form, "submit")>
                     <cfif structKeyExists(form, "userImage") AND len(form.userImage)>
                         <cffile action="upload"
                             filefield="form.userImage"
-                            destination="#expandPath(local.uploadLocation)#"
+                            destination="#expandPath(uploadLocation)#"
                             nameconflict="makeunique"
                             result="fileName">
-                        <cfset local.value = createObject("component", "components.addressBook")>
-                        <cfset local.result = local.value.signup(form.fullName, form.email, form.userName, fileName.serverfile, form.password)>
+                        <cfset value = createObject("component", "components.addressBook")>
+                        <cfset result = value.signup(form.fullName, form.email, form.userName, fileName.serverfile, form.password)>
                     <cfelse>
-                        <cfset local.value = createObject("component", "components.addressBook")>
-                        <cfset local.result = local.value.signup(form.fullName, form.email, form.userName, "/userDefault.jpg", form.password)>
+                        <cfset value = createObject("component", "components.addressBook")>
+                        <cfset result = value.signup(
+                            fullName = form.fullName, 
+                            email = form.email, 
+                            userName = form.userName, 
+                            inputImage = "/userDefault.jpg", 
+                            password = form.password
+                        )>
                     </cfif>
                     <div class="mt-2 red">
                         <cfoutput>
-                            #local.result#
+                            #result#
                         </cfoutput>
                     </div>
                 </cfif>

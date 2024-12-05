@@ -9,14 +9,15 @@
     <cflogin>
         <cfoauth
             type = "Google"
-            
+            clientid = ""
+            secretkey = ""
             result = "result"
             redirecturi = ""
             scope="email"
         >
         <cfif isDefined("result")>
-            <cfset local.googleObj = createObject("component", "components.addressBook")>
-            <cfset local.googleResult = local.googleObj.googleLogin(result)>
+            <cfset googleObj = createObject("component", "components.addressBook")>
+            <cfset googleResult = googleObj.googleLogin(result)>
         </cfif>
     </cflogin>
 </body>

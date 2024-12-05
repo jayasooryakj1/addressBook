@@ -1,25 +1,37 @@
 <cfcomponent>
 
     <cffunction  name="signup" returntype="string">
-        <cfargument  name="fullName">
         <cfargument  name="email">
         <cfargument  name="userName">
         <cfargument  name="inputImage">
         <cfargument  name="password">
+        <cfargument  name="fullName">
         <cfset local.uploadLocation = "./assets/imageUploads/">
         <cfset local.imageLink = "#local.uploadLocation##arguments.inputImage#">
         <cfset local.hashedPassword = hash("#arguments.password#", "SHA-256", "UTF-8")>
         <cfquery name="query">
-            select count(userName) as count from users where userName=<cfqueryparam value='#arguments.userName#' cfsqltype="CF_SQL_VARCHAR">
+            select 
+                count(userName) as count 
+            from users 
+            where userName=<cfqueryparam value='#arguments.userName#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
         <cfquery name="queryEmail">
-            select count(email) as countEmail from users where email=<cfqueryparam value='#arguments.email#' cfsqltype="CF_SQL_VARCHAR">
+            select count(email) as countEmail 
+            from users 
+            where email=<cfqueryparam value='#arguments.email#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
         <cfif query.count GT 0 or queryEmail.countEmail GT 0>
             <cfset local.result = "Username or email already exists">
         <cfelse>
             <cfquery name="insertValues">
-                insert into users (fullName, email, userName, userImage, pwd) values(
+                insert into users (
+                    fullName, 
+                    email, 
+                    userName, 
+                    userImage, 
+                    pwd
+                    ) 
+                    values(
                     <cfqueryparam value='#arguments.fullName#' cfsqltype="CF_SQL_VARCHAR">,
                     <cfqueryparam value='#arguments.email#' cfsqltype="CF_SQL_VARCHAR">,
                     <cfqueryparam value='#arguments.userName#' cfsqltype="CF_SQL_VARCHAR">,
@@ -37,13 +49,22 @@
         <cfargument  name="password">
         <cfset local.hashedPassword = hash("#arguments.password#", "SHA-256", "UTF-8")>
         <cfquery name="check">
-            select count(username) as count from users where userName=<cfqueryparam value= '#arguments.userName#' cfsqltype="CF_SQL_VARCHAR">
+            select 
+                count(username) as count 
+            from users 
+            where userName=<cfqueryparam value= '#arguments.userName#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
         <cfif check.count==0>
             <cfset local.result = "Invalid username">
         <cfelse>
             <cfquery name="pass">
-                select email, pwd, userImage, userId from users where userName=<cfqueryparam value='#arguments.userName#'>
+                select 
+                    email, 
+                    pwd, 
+                    userImage, 
+                    userId 
+                from users 
+                where userName=<cfqueryparam value='#arguments.userName#'>
             </cfquery>
             <cfif pass.pwd != local.hashedPassword>
                 <cfset local.result = "Incorrect password">
@@ -63,7 +84,27 @@
         <cfset local.imageLink = "#arguments.contactStruct[photo]#">
         <cfset local.today = now()>
         <cfquery name="entry">
-            insert into contacts (title, fname, lname, gender, dob, photo, address, street, district, state, country, pincode, email, phoneNumber, _createdBy, _editedBy, _createdOn, _updatedOn) values(
+            insert into contacts (
+                title, 
+                fname, 
+                lname, 
+                gender, 
+                dob, 
+                photo, 
+                address, 
+                street, 
+                district, 
+                state, 
+                country, 
+                pincode, 
+                email, 
+                phoneNumber, 
+                _createdBy, 
+                _editedBy,
+                 _createdOn, 
+                 _updatedOn
+                 ) 
+                 values(
                 <cfqueryparam value='#arguments.contactStruct["title"]#' cfsqltype="CF_SQL_VARCHAR">,
                 <cfqueryparam value='#arguments.contactStruct["fname"]#' cfsqltype="CF_SQL_VARCHAR">,
                 <cfqueryparam value='#arguments.contactStruct["lname"]#' cfsqltype="CF_SQL_VARCHAR">,
@@ -88,7 +129,15 @@
 
     <cffunction  name="displayContacts" returnType="query">
         <cfquery name="contacts">
-            select photo, fname, lname, email, phoneNumber, contactId from contacts where _createdBy=<cfqueryparam value='#session.userid#' cfsqltype="CF_SQL_VARCHAR">
+            select 
+                photo, 
+                fname, 
+                lname,
+                email, 
+                phoneNumber, 
+                contactId 
+            from contacts 
+            where _createdBy=<cfqueryparam value='#session.userid#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
         <cfreturn "#contacts#">
     </cffunction>
@@ -96,7 +145,9 @@
     <cffunction  name="deleteFunction" access="remote" returntype="any">
         <cfargument  name="dlt">
         <cfquery name="dltQuery">
-            delete from contacts where contactId =<cfqueryparam value='#arguments.dlt#' cfsqltype="CF_SQL_VARCHAR">
+            delete 
+            from contacts 
+            where contactId =<cfqueryparam value='#arguments.dlt#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
         <cfreturn true>
     </cffunction>
@@ -104,7 +155,10 @@
     <cffunction  name="checkPic" returntype="query">
         <cfargument  name="userid">
         <cfquery name="pic">
-            select photo from contacts where userId=<cfqueryparam value='#arguments.userid#' cfsqltype="CF_SQL_VARCHAR">
+            select 
+                photo 
+            from contacts 
+            where userId=<cfqueryparam value='#arguments.userid#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
         <cfreturn pic.photo>
     </cffunction>
@@ -112,7 +166,23 @@
     <cffunction  name="viewContact" returntype="struct" access="remote" returnFormat="JSON">
         <cfargument  name="viewId">
         <cfquery name="viewContact">
-            select title, fname, lname, gender, dob, photo, address, street, district, state, country, pincode, email, phoneNumber from contacts where contactId=<cfqueryparam value='#arguments.viewId#' cfsqltype="CF_SQL_VARCHAR">
+            select 
+                title,
+                fname, 
+                lname, 
+                gender, 
+                dob, 
+                photo, 
+                address, 
+                street, 
+                district, 
+                state, 
+                country, 
+                pincode, 
+                email, 
+                phoneNumber 
+            from contacts 
+            where contactId=<cfqueryparam value='#arguments.viewId#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
         <cfset local.contactStruct = structNew()>
         <cfset local.contactStruct["name"] = viewContact.title&" "&viewContact.fname&" "&viewContact.lname>
@@ -129,7 +199,24 @@
     <cffunction  name="editContact" returntype="struct" access="remote" returnFormat="JSON">
         <cfargument  name="editId">
         <cfquery name="editContact">
-            select contactId, title, fname, lname, gender, dob, photo, address, street, district, state, country, pincode, email, phoneNumber from contacts where contactId=<cfqueryparam value='#arguments.editId#' cfsqltype="CF_SQL_VARCHAR">
+            select 
+                contactId, 
+                title, 
+                fname, 
+                lname, 
+                gender, 
+                dob, 
+                photo, 
+                address, 
+                street, 
+                district, 
+                state, 
+                country, 
+                pincode, 
+                email, 
+                phoneNumber 
+            from contacts 
+            where contactId=<cfqueryparam value='#arguments.editId#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
         <cfset local.contactEdit = structNew()>
         <cfset local.contactEdit["contactId"] = editContact.contactId>
@@ -155,7 +242,8 @@
         <cfset local.imageLink = "#arguments.contactUpdate[photo]#">
         <cfset local.today = now()>
         <cfquery name="update">
-            update contacts set 
+            update contacts 
+            set 
                 title=<cfqueryparam value='#contactUpdate["title"]#' cfsqltype="CF_SQL_VARCHAR">,
                 fname=<cfqueryparam value='#contactUpdate["fname"]#' cfsqltype="CF_SQL_VARCHAR">,
                 lname=<cfqueryparam value='#contactUpdate["lname"]#' cfsqltype="CF_SQL_VARCHAR">,
@@ -181,22 +269,17 @@
         <cfreturn true>
     </cffunction>
 
-    <cffunction  name="spreadsheetDownload" access="remote">
-        <cfquery name="downloadSpreadsheet">
-            select title, fname, lname, gender, dob, address, street, district, state, country, pincode, email, phoneNumber from contacts where _createdBy=<cfqueryparam value='#session.user#' cfsqltype="CF_SQL_VARCHAR">
-        </cfquery>
-        <cfset local.spreadsheetName = CreateUUID()&".xlsx">
-        <cfset local.filePath = ExpandPath("../spreadsheetDownloads/"&local.spreadsheetName)>
-        <cfspreadsheet action="write" query="downloadSpreadsheet" filename="#local.filePath#" overwrite="yes">
-        <cfreturn true>
-    </cffunction>
 
     <cffunction name="emailExist" access="remote">
         <cfargument name="existentEmail">
         <cfargument name="existentNumber">
         <cfargument name="contactId" default="">
         <cfquery name="qry">
-            select email, contactId from contacts where email=<cfqueryparam value='#arguments.existentEmail#' cfsqltype="CF_SQL_VARCHAR">
+            select 
+                email, 
+                contactId 
+            from contacts 
+            where email=<cfqueryparam value='#arguments.existentEmail#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
         <cfloop query="qry">
             <cfif qry.contactId NEQ arguments.contactId>
@@ -204,7 +287,11 @@
             </cfif>
         </cfloop>
         <cfquery name="number">
-            select phoneNumber, contactId from contacts where phoneNumber=<cfqueryparam value='#arguments.existentNumber#' cfsqltype="CF_SQL_VARCHAR">
+            select 
+                phoneNumber, 
+                contactId 
+            from contacts 
+            where phoneNumber=<cfqueryparam value='#arguments.existentNumber#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
         <cfloop query="number">
             <cfif number.contactId NEQ arguments.contactId>
@@ -216,12 +303,42 @@
         </cfif>
     </cffunction>
 
-    <cffunction  name="pdfDownloader">
-        <cfquery name="pdfDownloadQry">
-            select photo, title, fname, lname, gender, dob, address, street, district, state, country, pincode, email, phoneNumber from contacts where _createdBy=<cfqueryparam value='#session.user#' cfsqltype="CF_SQL_VARCHAR">
+    <cffunction  name="getData" returntype="query">
+        <cfquery name="gotData">
+            select 
+                photo, 
+                title, 
+                fname, 
+                lname, 
+                gender, 
+                dob, 
+                address, 
+                street, 
+                district, 
+                state, 
+                country, 
+                pincode, 
+                email, 
+                phoneNumber 
+            from contacts 
+            where _createdBy=<cfqueryparam value='#session.userid#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
-        <cfreturn pdfDownloadQry>
+        <cfreturn gotData>
     </cffunction>
+
+    <cffunction  name="spreadsheetDownload" access="remote">
+        <cfset local.spreadSheetData = getData()>
+        <cfset local.spreadsheetName = CreateUUID()&".xlsx">
+        <cfset local.filePath = ExpandPath("../spreadsheetDownloads/"&local.spreadsheetName)>
+        <cfspreadsheet action="write" query="local.spreadSheetData" filename="#local.filePath#" overwrite="yes">
+        <cfreturn true>
+    </cffunction>
+
+    <cffunction  name="pdfDownloader">
+        <cfset local.pdfData = getData()>
+        <cfreturn local.pdfData>
+    </cffunction>
+
 
     <cffunction  name="googleLogin">
         <cfargument  name="googleStruct">
@@ -230,7 +347,11 @@
         </cfquery>
         <cfif googleProfile.emailCount GT 0>
             <cfquery name="googleCred">
-                select userName, userid from users where email='#arguments.googleStruct.other.email#'
+                select 
+                    userName, 
+                    userid 
+                from users 
+                where email='#arguments.googleStruct.other.email#'
             </cfquery>
             <cfset session.userId = googleCred.userId>
             <cfset session.user = googleCred.userName>
@@ -239,7 +360,12 @@
             <cflocation  url="home.cfm">
         <cfelse>
             <cfquery name="addGoogle">
-                insert into users (email, userName, userImage) values(
+                insert into users (
+                    email, 
+                    userName, 
+                    userImage
+                    ) 
+                    values(
                     <cfqueryparam value='#arguments.googleStruct.other.email#' cfsqltype="CF_SQL_VARCHAR">,
                     <cfqueryparam value='#arguments.googleStruct.other.given_name#' cfsqltype="CF_SQL_VARCHAR">,
                     <cfqueryparam value='#arguments.googleStruct.other.picture#' cfsqltype="CF_SQL_VARCHAR">
@@ -260,7 +386,11 @@
         <cfset local.today = dateFormat(now(), "mm/dd")>
         <cfset local.birthdayToday= "">
         <cfquery name="findBirthday">
-            select fname, email, dob from contacts
+            select 
+                fname, 
+                email, 
+                dob 
+            from contacts
         </cfquery>
         <cfif findBirthday.recordcount GT 0>
             <cfloop query="findBirthday">
