@@ -11,16 +11,36 @@
     <body>
         
         <div class="header d-flex align-items-center p-2 d-flex">
-            <div class="ms-5 me-2"><img src="assets/images/phone-book.png" alt="phoneBook" width="40">ADDRESS BOOK</div>
+            <div class="ms-5 me-2">
+                <img src="assets/images/phone-book.png" alt="phoneBook" width="40">
+                ADDRESS BOOK
+            </div>
             <form method="post">
-                <div class="login"><button type="button" class="logoutButton" onclick="logOut()" name="logout"><img src="assets/images/logout.png" alt="logout" width="20">Logout</button></div>
+                <div class="login">
+                    <button type="button" class="logoutButton" onclick="logOut()" name="logout">
+                        <img src="assets/images/logout.png" alt="logout" width="20">
+                        Logout
+                    </button>
+                </div>
             </form>
         </div>
         <div class="homeHeader downloadIcons bg-white d-flex align-items-center">
             <form method="post" class="d-flex headerDonwloadIcons">
-                <div class="downloadIcons"><button type="submit" name="pdfDownload" onclick="return pdfDownloadAlert()"><img src="assets/images/pdf.png" alt="pdfImage" width="30"></button></div>
-                <div class="ms-2"><button type="button" name="ssDownload" onclick="spreadsheetDownload()"><img src="assets/images/excel.png" alt="excelImage" width="30"></button></div>
-                <div class="ms-2"><button type="button" name="print" onclick="printFunction()"><img src="assets/images/printer.png" alt="printerImage" width="30"></button></div>
+                <div class="downloadIcons">
+                    <button type="submit" name="pdfDownload" onclick="return pdfDownloadAlert()">
+                        <img src="assets/images/pdf.png" alt="pdfImage" width="30">
+                    </button>
+                </div>
+                <div class="ms-2">
+                    <button type="button" name="ssDownload" onclick="spreadsheetDownload()">
+                        <img src="assets/images/excel.png" alt="excelImage" width="30">
+                    </button>
+                </div>
+                <div class="ms-2">
+                    <button type="button" name="print" onclick="printFunction()">
+                        <img src="assets/images/printer.png" alt="printerImage" width="30">
+                    </button>
+                </div>
             </form>
         </div>
 
@@ -74,8 +94,16 @@
 
             <!--- USER CARD --->
             <div class="userCard bg-white d-flex flex-column align-items-center pt-3 pb-4">
-                <div><cfoutput><img class="userImage" src="#session.userImage#" alt="userDefault" height="70" width="70"></cfoutput></div>
-                <div class="userName mt-4" id="userName"><cfoutput><b>#session.user#</b></cfoutput></div>
+                <div>
+                    <cfoutput>
+                        <img class="userImage" src="#session.userImage#" alt="userDefault" height="70" width="70">
+                    </cfoutput>
+                </div>
+                <div class="userName mt-4" id="userName">
+                    <cfoutput>
+                        <b>#session.user#</b>
+                    </cfoutput>
+                </div>
                 <button type="button" onclick="createContact()" class="btn btn-primary rounded-pill mt-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                     CREATE CONTACT
                 </button>
@@ -132,7 +160,9 @@
                                     <div class="modalHeadings2 mt-3 ms-4">
                                         <b>Upload Photo</b><br>
                                         <input class="mt-3 profilePic pt-1" name="photo" id="photo" type="file">
-                                        <div class="d-hidden"><input type="hidden" id="imgHidden" name="imgHidden"></div>
+                                        <div class="d-hidden">
+                                            <input type="hidden" id="imgHidden" name="imgHidden">
+                                        </div>
                                     </div>
                                     <div class="modalHeadings partHeading mt-4">
                                         <h5>Contact Details</h5>
@@ -180,11 +210,15 @@
                                     <div id="modalError" class="text-center mt-4"></div>
                                 </div>
                                 <div class="userPic text-center">
-                                    <cfoutput><img id="contactCreationImage" class="userImage" src="assets/imageUploads/userDefault.jpg" alt="userDefault" height="70" width="70"></cfoutput>
+                                    <cfoutput>
+                                        <img id="contactCreationImage" class="userImage" src="assets/imageUploads/userDefault.jpg" alt="userDefault" height="70" width="70">
+                                    </cfoutput>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" onclick="closeModal()" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-secondary" onclick="closeModal()" data-bs-dismiss="modal">
+                                    Close
+                                </button>
                                 <input type="button" name="create" id="submit" value="submit" onclick="modalValidation()" class="btn btn-primary">
                             </div>
                         </div>
@@ -251,9 +285,21 @@
                                         <td>#item.getfname()# #item.getlname()#</td>
                                         <td>#item.getemail()#</td>
                                         <td>#item.getphoneNumber()#</td>
-                                        <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##staticBackdrop" value="#result.contactId#" name="edit" id="editButton" onclick="editContact(this)">Edit</button></td>
-                                        <td><button class="printHidden btn btn-primary optionsButton" value="#result.contactId#" name="dlt" onclick="deleteContact(this)" type="button">Delete</button></td>
-                                        <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##viewModal" value="#result.contactId#" name="view" onclick="viewContact(this)">View</button></td>
+                                        <td>
+                                            <button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##staticBackdrop" value="#item.getcontactId()#" name="edit" id="editButton" onclick="editContact(this)">
+                                                Edit
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button class="printHidden btn btn-primary optionsButton" value="#item.getcontactId()#" name="dlt" onclick="deleteContact(this)" type="button">
+                                                Delete
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##viewModal" value="#item.getcontactId()#" name="view" onclick="viewContact(this)">
+                                                View
+                                            </button>
+                                        </td>
                                     </tr>
                                 </cfloop>
                             </table>
@@ -329,7 +375,9 @@
                                 <div class="ms-5" id="detailsPhone"></div>
                             </div>
                             <div class="text-center my-5">
-                                <button type="button" class="btn btn-secondary viewClose" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-secondary viewClose" data-bs-dismiss="modal">
+                                    Close
+                                </button>
                             </div>
                         </div>
                         <div class="viewContactPic text-center"><img id="contactProfilePic" alt="profile pic" width="100" height="100"></div>

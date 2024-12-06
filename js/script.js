@@ -2,6 +2,19 @@ if ( window.history.replaceState ) {
     window.history.replaceState( null, null, window.location.href );
 }
 
+$(function(){
+    var dateToday = new Date();
+    var month = dateToday.getMonth() + 1;
+    var day = dateToday.getDay();
+    var year = dateToday.getFullYear();
+    if(month<0)
+        month='0'+month.toString();
+    if(day<10)
+        day='0'+day.toString();
+    var maxDate = year + '-' + month + '-' + day;
+    $('.dob').attr('max', maxDate)
+})
+
 function signupValidation(event) {
     var fullName =  document.getElementById("fullName").value;
     var email =  document.getElementById("email").value;

@@ -45,7 +45,12 @@
                             nameconflict="makeunique"
                             result="fileName">
                         <cfset value = createObject("component", "components.addressBook")>
-                        <cfset result = value.signup(form.fullName, form.email, form.userName, fileName.serverfile, form.password)>
+                        <cfset result = value.signup(
+                            fullName =form.fullName,
+                            email = form.email,
+                            userName = form.userName,
+                            inputImage = fileName.serverfile,
+                            password = form.password)>
                     <cfelse>
                         <cfset value = createObject("component", "components.addressBook")>
                         <cfset result = value.signup(
