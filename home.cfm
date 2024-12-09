@@ -154,7 +154,9 @@
                                         </div>
                                         <div class="modalHeadings2 mt-3 ms-4">
                                             <b>Date of Birth *</b><br>
-                                            <input class="mt-3 dob" name="dob" id="dob" type="date">
+                                            <cfoutput>
+                                                <input class="mt-3 dob" name="dob" id="dob" type="date" max=#dateFormat(now(),"yyyy-mm-dd")#>
+                                            </cfoutput>
                                         </div>
                                     </div>
                                     <div class="modalHeadings2 mt-3 ms-4">
