@@ -3,6 +3,12 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="css/bootstrap-5.0.2-dist/bootstrap-5.0.2-dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/homeStyle.css">
@@ -11,23 +17,43 @@
     <body>
         
         <div class="header d-flex align-items-center p-2 d-flex">
-            <div class="ms-5 me-2"><img src="assets/images/phone-book.png" alt="phoneBook" width="40">ADDRESS BOOK</div>
+            <div class="ms-5 me-2">
+                <img src="assets/images/phone-book.png" alt="phoneBook" width="40">
+                ADDRESS BOOK
+            </div>
             <form method="post">
-                <div class="login"><button type="button" class="logoutButton" onclick="logOut()" name="logout"><img src="assets/images/logout.png" alt="logout" width="20">Logout</button></div>
+                <div class="login">
+                    <button type="button" class="logoutButton" onclick="logOut()" name="logout">
+                        <img src="assets/images/logout.png" alt="logout" width="20">
+                        Logout
+                    </button>
+                </div>
             </form>
         </div>
         <div class="homeHeader downloadIcons bg-white d-flex align-items-center">
             <form method="post" class="d-flex headerDonwloadIcons">
-                <div class="downloadIcons"><button type="submit" name="pdfDownload" onclick="return pdfDownloadAlert()"><img src="assets/images/pdf.png" alt="pdfImage" width="30"></button></div>
-                <div class="ms-2"><button type="button" name="ssDownload" onclick="spreadsheetDownload()"><img src="assets/images/excel.png" alt="excelImage" width="30"></button></div>
-                <div class="ms-2"><button type="button" name="print" onclick="printFunction()"><img src="assets/images/printer.png" alt="printerImage" width="30"></button></div>
+                <div class="downloadIcons">
+                    <button type="submit" name="pdfDownload" onclick="return pdfDownloadAlert()">
+                        <img src="assets/images/pdf.png" alt="pdfImage" width="30">
+                    </button>
+                </div>
+                <div class="ms-2">
+                    <button type="button" name="ssDownload" onclick="spreadsheetDownload()">
+                        <img src="assets/images/excel.png" alt="excelImage" width="30">
+                    </button>
+                </div>
+                <div class="ms-2">
+                    <button type="button" name="print" onclick="printFunction()">
+                        <img src="assets/images/printer.png" alt="printerImage" width="30">
+                    </button>
+                </div>
             </form>
         </div>
 
         <!--- PDF BODY --->
         <cfif structKeyExists(form, "pdfDownload")>
-            <cfset local.pdfObj = createObject("component", "components.addressBook")>
-            <cfset local.result = local.pdfObj.pdfDownloader()>
+            <cfset pdfObj = createObject("component", "components.addressBook")>
+            <cfset result = pdfObj.pdfDownloader()>
             <cfdocument  format="pdf" overwrite="yes" fileName="pdfDownload/downloadedPdf.pdf" orientation="landscape">
                 <table border="1">
                     <tr>
@@ -47,22 +73,22 @@
                         <th>phoneNumber</th>
                     </tr>
                     <cfoutput>
-                        <cfloop query="#local.result#">
+                        <cfloop query="#result#">
                             <tr>
-                                <td><img src="#local.result.photo#" width="30"></td>
-                                <td>#local.result.title#</td>
-                                <td>#local.result.fname#</td>
-                                <td>#local.result.lname#</td>
-                                <td>#local.result.gender#</td>
-                                <td>#local.result.dob#</td>
-                                <td>#local.result.address#</td>
-                                <td>#local.result.street#</td>
-                                <td>#local.result.district#</td>
-                                <td>#local.result.state#</td>
-                                <td>#local.result.country#</td>
-                                <td>#local.result.pincode#</td>
-                                <td>#local.result.email#</td>
-                                <td>#local.result.phoneNumber#</td>
+                                <td><img src="#result.photo#" width="30"></td>
+                                <td>#result.title#</td>
+                                <td>#result.fname#</td>
+                                <td>#result.lname#</td>
+                                <td>#result.gender#</td>
+                                <td>#result.dob#</td>
+                                <td>#result.address#</td>
+                                <td>#result.street#</td>
+                                <td>#result.district#</td>
+                                <td>#result.state#</td>
+                                <td>#result.country#</td>
+                                <td>#result.pincode#</td>
+                                <td>#result.email#</td>
+                                <td>#result.phoneNumber#</td>
                             </tr>
                         </cfloop>
                     </cfoutput>
@@ -74,8 +100,16 @@
 
             <!--- USER CARD --->
             <div class="userCard bg-white d-flex flex-column align-items-center pt-3 pb-4">
-                <div><cfoutput><img class="userImage" src="#session.userImage#" alt="userDefault" height="70" width="70"></cfoutput></div>
-                <div class="userName mt-4" id="userName"><cfoutput><b>#session.user#</b></cfoutput></div>
+                <div>
+                    <cfoutput>
+                        <img class="userImage" src="#session.userImage#" alt="userDefault" height="70" width="70">
+                    </cfoutput>
+                </div>
+                <div class="userName mt-4" id="userName">
+                    <cfoutput>
+                        <b>#session.user#</b>
+                    </cfoutput>
+                </div>
                 <button type="button" onclick="createContact()" class="btn btn-primary rounded-pill mt-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                     CREATE CONTACT
                 </button>
@@ -126,13 +160,17 @@
                                         </div>
                                         <div class="modalHeadings2 mt-3 ms-4">
                                             <b>Date of Birth *</b><br>
-                                            <input class="mt-3 dob" name="dob" id="dob" type="date">
+                                            <cfoutput>
+                                                <input class="mt-3 dob" name="dob" id="dob" type="date" max=#dateFormat(now(),"yyyy-mm-dd")#>
+                                            </cfoutput>
                                         </div>
                                     </div>
                                     <div class="modalHeadings2 mt-3 ms-4">
                                         <b>Upload Photo</b><br>
                                         <input class="mt-3 profilePic pt-1" name="photo" id="photo" type="file">
-                                        <div class="d-hidden"><input type="hidden" id="imgHidden" name="imgHidden"></div>
+                                        <div class="d-hidden">
+                                            <input type="hidden" id="imgHidden" name="imgHidden">
+                                        </div>
                                     </div>
                                     <div class="modalHeadings partHeading mt-4">
                                         <h5>Contact Details</h5>
@@ -177,14 +215,26 @@
                                             <input class="mt-3" type="text" name="phoneNumber" id="phoneNumber">
                                         </div>
                                     </div>
+                                    <div class="modalHeadings mt-3 ms-4">
+                                        <b>Role *</b><br>
+                                        <select class="form-control selectpicker" name="role" multiple>
+                                            <option value="1">One</option>
+                                            <option value="2">Two</option>
+                                            <option value="3">Three</option>
+                                        </select>
+                                    </div>
                                     <div id="modalError" class="text-center mt-4"></div>
                                 </div>
                                 <div class="userPic text-center">
-                                    <cfoutput><img id="contactCreationImage" class="userImage" src="assets/imageUploads/userDefault.jpg" alt="userDefault" height="70" width="70"></cfoutput>
+                                    <cfoutput>
+                                        <img id="contactCreationImage" class="userImage" src="assets/imageUploads/userDefault.jpg" alt="userDefault" height="70" width="70">
+                                    </cfoutput>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" onclick="closeModal()" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-secondary" onclick="closeModal()" data-bs-dismiss="modal">
+                                    Close
+                                </button>
                                 <input type="button" name="create" id="submit" value="submit" onclick="modalValidation()" class="btn btn-primary">
                             </div>
                         </div>
@@ -194,29 +244,31 @@
 
             <!--- CREATE --->
             <cfif structKeyExists(form, "create")>
-                <cfset local.uploadLocation = "./assets/imageUploads/">
+                <cfset uploadLocation = "./assets/imageUploads/">
                 <cfif structKeyExists(form, "photo") AND len(form.photo)>
                     <cffile action="upload"
                             filefield="form.photo"
-                            destination="#expandPath(local.uploadLocation)#"
+                            destination="#expandPath(uploadLocation)#"
                             nameconflict="makeunique"
                             result="fileName">
-                    <cfset local.contact[photo] = local.uploadLocation&fileName.serverfile>
+                    <cfset contact[photo] = uploadLocation&fileName.serverfile>
                 <cfelse>
                     <cfset form.photo = "/userDefault.jpg">
-                    <cfset local.contact[photo] = local.uploadLocation&"#form.photo#">
+                    <cfset contact[photo] = uploadLocation&"#form.photo#">
                 </cfif>
                 <cfloop collection="#form#" item="item">
-                    <cfset local.contact[item] = form[item]>
+                    <cfset contact[item] = form[item]>
                 </cfloop>
-                <cfset local.obj = createObject("component", "components.addressBook")>
-                <cfset local.result = local.obj.contactsEntry(local.contact)>
+                <cfset obj = createObject("component", "components.addressBook")>
+                <cfset result = obj.contactsEntry(
+                    contactStruct = contact
+                )>
             </cfif>
 
             <!--- DISPLAY CONTACTS --->
             <div class="contacts bg-white ms-3">
-                <cfset local.value = createObject("component", "components.addressBook")>
-                <cfset local.result = local.value.displayContacts()>
+                <cfset value = createObject("component", "components.addressBook")>
+                <cfset result = value.displayContacts()>
                 <div id="printSection">
                     <form method="post">
                         <cfoutput>
@@ -230,28 +282,40 @@
                                     <th></th>
                                     <th></th>
                                 </tr>
-                                <!---<cfloop query="#local.result#">
+                                <!---<cfloop query="#result#">
                                     <tr class="borderBottom">
-                                        <td class="text-center pt-3 pb-3"><img src="#local.result.photo#" height="70" width="70" class="contactPic"></td>
-                                        <td>#local.result.fname# #local.result.lname#</td>
-                                        <td>#local.result.email#</td>
-                                        <td>#local.result.phoneNumber#</td>
-                                        <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##staticBackdrop" value="#local.result.contactId#" name="edit" id="editButton" onclick="editContact(this)">Edit</button></td>
-                                        <td><button class="printHidden btn btn-primary optionsButton" value="#local.result.contactId#" name="dlt" onclick="deleteContact(this)" type="button">Delete</button></td>
-                                        <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##viewModal" value="#local.result.contactId#" name="view" onclick="viewContact(this)">View</button></td>
+                                        <td class="text-center pt-3 pb-3"><img src="#result.photo#" height="70" width="70" class="contactPic"></td>
+                                        <td>#result.fname# #result.lname#</td>
+                                        <td>#result.email#</td>
+                                        <td>#result.phoneNumber#</td>
+                                        <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##staticBackdrop" value="#result.contactId#" name="edit" id="editButton" onclick="editContact(this)">Edit</button></td>
+                                        <td><button class="printHidden btn btn-primary optionsButton" value="#result.contactId#" name="dlt" onclick="deleteContact(this)" type="button">Delete</button></td>
+                                        <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##viewModal" value="#result.contactId#" name="view" onclick="viewContact(this)">View</button></td>
                                     </tr>
                                 </cfloop>--->
                                 <cfset ormReload()>
-                                <cfset local.var = entityLoad("contacts", {_createdBy=#session.userid#})>
-                                <cfloop array="#local.var#" item="item">
-                                    <tr class="borderBottom">
+                                <cfset var = entityLoad("contacts", {_createdBy=#session.userid#})>
+                                <cfloop array="#var#" item="item">
+                                    <tr class="borderBottom" id="#item.getcontactId()#">
                                         <td class="text-center pt-3 pb-3"><img src="#item.getphoto()#" height="70" width="70" class="contactPic"></td>
                                         <td>#item.getfname()# #item.getlname()#</td>
                                         <td>#item.getemail()#</td>
                                         <td>#item.getphoneNumber()#</td>
-                                        <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##staticBackdrop" value="#local.result.contactId#" name="edit" id="editButton" onclick="editContact(this)">Edit</button></td>
-                                        <td><button class="printHidden btn btn-primary optionsButton" value="#local.result.contactId#" name="dlt" onclick="deleteContact(this)" type="button">Delete</button></td>
-                                        <td><button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##viewModal" value="#local.result.contactId#" name="view" onclick="viewContact(this)">View</button></td>
+                                        <td>
+                                            <button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##staticBackdrop" value="#item.getcontactId()#" name="edit" id="editButton" onclick="editContact(this)">
+                                                Edit
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button class="printHidden btn btn-primary optionsButton" value="#item.getcontactId()#" name="dlt" onclick="deleteContact(this)" type="button">
+                                                Delete
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="printHidden btn btn-primary optionsButton" data-bs-toggle="modal" data-bs-target="##viewModal" value="#item.getcontactId()#" name="view" onclick="viewContact(this)">
+                                                View
+                                            </button>
+                                        </td>
                                     </tr>
                                 </cfloop>
                             </table>
@@ -263,22 +327,24 @@
 
         <!--- EDIT --->
             <cfif structKeyExists(form, "edit")>
-                <cfset local.uploadLocation = "./assets/imageUploads/">
+                <cfset uploadLocation = "./assets/imageUploads/">
                 <cfif structKeyExists(form, "photo") AND len(form.photo)>
                     <cffile action="upload"
                             filefield="form.photo"
-                            destination="#expandPath(local.uploadLocation)#"
+                            destination="#expandPath(uploadLocation)#"
                             nameconflict="makeunique"
                             result="fileName">
-                    <cfset local.contact[photo] = local.uploadLocation&fileName.serverfile>
+                    <cfset contact[photo] = uploadLocation&fileName.serverfile>
                 <cfelse>
-                    <cfset local.contact[photo] = "#form.imgHidden#">
+                    <cfset contact[photo] = "#form.imgHidden#">
                 </cfif>
                 <cfloop collection="#form#" item="item">
-                    <cfset local.contact[item] = form[item]>
+                    <cfset contact[item] = form[item]>
                 </cfloop>
-                <cfset local.obj = createObject("component", "components.addressBook")>
-                <cfset local.result = local.obj.contactsUpdate(local.contact)>
+                <cfset obj = createObject("component", "components.addressBook")>
+                <cfset result = obj.contactsUpdate(
+                    contactUpdate = contact
+                )>
             </cfif>
         
         <!--- VIEW MODAL --->
@@ -324,8 +390,15 @@
                                 <div class="detailsLabel2"><b>:</b></div>
                                 <div class="ms-5" id="detailsPhone"></div>
                             </div>
+                            <div class="d-flex ms-5 mt-3">
+                                <div class="detailsLabel"><b>Role</b></div>
+                                <div class="detailsLabel2"><b>:</b></div>
+                                <div class="ms-5" id="detailsRole"></div>
+                            </div>
                             <div class="text-center my-5">
-                                <button type="button" class="btn btn-secondary viewClose" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-secondary viewClose" data-bs-dismiss="modal">
+                                    Close
+                                </button>
                             </div>
                         </div>
                         <div class="viewContactPic text-center"><img id="contactProfilePic" alt="profile pic" width="100" height="100"></div>
