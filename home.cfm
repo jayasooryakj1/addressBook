@@ -3,6 +3,12 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="css/bootstrap-5.0.2-dist/bootstrap-5.0.2-dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/homeStyle.css">
@@ -209,6 +215,14 @@
                                             <input class="mt-3" type="text" name="phoneNumber" id="phoneNumber">
                                         </div>
                                     </div>
+                                    <div class="modalHeadings mt-3 ms-4">
+                                        <b>Role *</b><br>
+                                        <select class="form-control selectpicker" name="role" multiple>
+                                            <option value="1">One</option>
+                                            <option value="2">Two</option>
+                                            <option value="3">Three</option>
+                                        </select>
+                                    </div>
                                     <div id="modalError" class="text-center mt-4"></div>
                                 </div>
                                 <div class="userPic text-center">
@@ -282,7 +296,7 @@
                                 <cfset ormReload()>
                                 <cfset var = entityLoad("contacts", {_createdBy=#session.userid#})>
                                 <cfloop array="#var#" item="item">
-                                    <tr class="borderBottom">
+                                    <tr class="borderBottom" id="#item.getcontactId()#">
                                         <td class="text-center pt-3 pb-3"><img src="#item.getphoto()#" height="70" width="70" class="contactPic"></td>
                                         <td>#item.getfname()# #item.getlname()#</td>
                                         <td>#item.getemail()#</td>
@@ -375,6 +389,11 @@
                                 <div class="detailsLabel"><b>Phone</b></div>
                                 <div class="detailsLabel2"><b>:</b></div>
                                 <div class="ms-5" id="detailsPhone"></div>
+                            </div>
+                            <div class="d-flex ms-5 mt-3">
+                                <div class="detailsLabel"><b>Role</b></div>
+                                <div class="detailsLabel2"><b>:</b></div>
+                                <div class="ms-5" id="detailsRole"></div>
                             </div>
                             <div class="text-center my-5">
                                 <button type="button" class="btn btn-secondary viewClose" data-bs-dismiss="modal">

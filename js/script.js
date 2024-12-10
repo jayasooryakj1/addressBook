@@ -156,7 +156,7 @@ function deleteContact(dltObj){
             data:{dlt:dltObj.value},
             success:function(result){
                 if(result){
-                    location.reload();
+                    document.getElementById(dltObj.value).remove()
                 }
             }
         })
@@ -179,6 +179,7 @@ function viewContact(viewId)
             document.getElementById("detailsPincode").innerHTML=resultStruct.pincode
             document.getElementById("detailsEmail").innerHTML=resultStruct.email
             document.getElementById("detailsPhone").innerHTML=resultStruct.phn
+            document.getElementById("detailsRole").innerHTML=resultStruct.roles
         }
     });
 }
