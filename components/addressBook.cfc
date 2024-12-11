@@ -145,6 +145,11 @@
 
     <cffunction  name="deleteFunction" access="remote" returntype="any">
         <cfargument  name="dlt">
+        <cfquery>
+            DELETE 
+            FROM contactRoles 
+            WHERE contactId =<cfqueryparam value='#arguments.dlt#' cfsqltype="CF_SQL_VARCHAR">
+        </cfquery>
         <cfquery name="dltQuery">
             DELETE 
             FROM contacts 
@@ -187,8 +192,25 @@
                 phoneNumber = <cfqueryparam value='#contactUpdate["phoneNumber"]#' cfsqltype="CF_SQL_VARCHAR">,
                 _updatedOn = <cfqueryparam value='#local.today#' cfsqltype="CF_SQL_DATE">,
                 _editedBy = <cfqueryparam value='#session.userid#' cfsqltype="CF_SQL_VARCHAR">
-                WHERE contactId = '#contactUpdate["contactId"]#'
+                WHERE contactId = <cfqueryparam value='#contactUpdate["contactId"]#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
+        <cfquery name="dltRoles">
+            DELETE 
+            FROM contactRoles
+            WHERE contactId = <cfqueryparam value='#contactUpdate["contactId"]#' cfsqltype="CF_SQL_VARCHAR">
+        </cfquery>
+        <cfloop list="#arguments.contactUpdate["role"]#" item="item" delimiters=",">
+            <cfquery name="insertRole">
+                INSERT INTO contactRoles(
+                    contactid,
+                    roleId
+                )
+                VALUES(
+                    <cfqueryparam value='#contactUpdate["contactId"]#' cfsqltype="CF_SQL_VARCHAR">,
+                    <cfqueryparam value='#item#'cfsqltype="CF_SQL_INTEGER">
+                )
+            </cfquery>
+        </cfloop>
         <cflocation  url="home.cfm">
     </cffunction>
 
@@ -261,14 +283,8 @@
             FROM contacts 
             WHERE #local.colName#=<cfqueryparam value='#local.condition#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
-        <cfif structKeyExists(arguments, id)>
-            <cfquery name="join">
-                SELECT roleName
-                FROM contactRoles
-                INNER JOIN roles
-                ON contactRoles.roleId = roles.roleId
-                WHERE #local.colName#=<cfqueryparam value='#local.condition#' cfsqltype="CF_SQL_VARCHAR">
-            </cfquery>
+        <cfif structKeyExists(arguments, "id")>
+            <cfset local.joinObj = getRoles(arguments.id)>
             <cfset contactDetails["title"] = gotData.title>
             <cfset contactDetails["contactid"] = gotData.contactid>
             <cfset contactDetails["fname"] = gotData.fname>
@@ -285,8 +301,8 @@
             <cfset contactDetails["email"] = gotData.email>
             <cfset contactDetails["phoneNumber"] = gotData.phoneNumber>
             <cfset contactDetails["roles"] = "">
-            <cfloop query="join">
-                <cfset contactDetails["roles"] = contactDetails["roles"]&" "&join.roleName>
+            <cfloop query="#local.joinObj#">
+                <cfset contactDetails["roles"] = contactDetails["roles"]&local.joinObj.roleName&" ">
             </cfloop>
             <cfreturn contactDetails>
         <cfelse>
@@ -294,8 +310,32 @@
         </cfif>
     </cffunction>
 
+    <cffunction  name="getRoles">
+        <cfargument  name="contactId">
+        <cfquery name="join">
+            SELECT 
+                roleName,
+                contactRoles.roleId
+            FROM contactRoles
+            INNER JOIN roles
+            ON contactRoles.roleId = roles.roleId
+            WHERE contactId=<cfqueryparam value='#arguments.contactId#' cfsqltype="CF_SQL_VARCHAR">
+        </cfquery>
+        <cfreturn join>
+    </cffunction>
+
     <cffunction  name="spreadsheetDownload" access="remote">
         <cfset local.spreadSheetData = getData()>
+        <cfset local.roleArray = arrayNew(1)>
+        <cfloop query="local.spreadSheetData">
+            <cfset local.roleString = "">
+            <cfset local.spreadSheetRole = getRoles(local.spreadSheetData.contactId)>
+            <cfloop query="local.spreadSheetRole">
+                <cfset local.roleString = local.roleString&" "&local.spreadSheetRole.roleName>
+            </cfloop>
+            <cfset arrayAppend(local.roleArray, local.roleString)>
+        </cfloop>
+        <cfset queryAddColumn(local.spreadSheetData, "role", local.roleArray)>
         <cfset local.spreadsheetName = CreateUUID()&".xlsx">
         <cfset local.filePath = ExpandPath("../spreadsheetDownloads/"&local.spreadsheetName)>
         <cfspreadsheet action="write" query="local.spreadSheetData" filename="#local.filePath#" overwrite="yes">
@@ -320,11 +360,13 @@
         <cfset local.contactStruct["email"] = local.viewContact.email>
         <cfset local.contactStruct["phn"] = local.viewContact.phoneNumber>
         <cfset local.contactStruct["roles"] = local.viewContact.roles>
+        <cfreturn local.contactStruct>
     </cffunction>
 
     <cffunction  name="editContact" returntype="struct" access="remote" returnFormat="JSON">
         <cfargument  name="editId">
         <cfset local.editContact = getData(id = arguments.editId)>
+        <cfset local.editRole = getRoles(contactId = local.editContact.contactId)>
         <cfset local.contactEdit = structNew()>
         <cfset local.contactEdit["contactId"] = local.editContact.contactId>
         <cfset local.contactEdit["title"] = local.editContact.title>
@@ -341,6 +383,11 @@
         <cfset local.contactEdit["pincode"] = local.editContact.pincode>
         <cfset local.contactEdit["email"] = local.editContact.email>
         <cfset local.contactEdit["phoneNumber"] = local.editContact.phoneNumber>
+        <cfset local.roleString =" ">
+        <cfloop query="local.editRole">
+            <cfset local.roleString = local.roleString&" "&local.editRole.roleId>
+        </cfloop>
+        <cfset local.contactEdit["roles"] = local.roleString>
         <cfreturn local.contactEdit>
     </cffunction>
 

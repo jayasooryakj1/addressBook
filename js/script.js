@@ -179,6 +179,8 @@ function viewContact(viewId)
             document.getElementById("detailsPincode").innerHTML=resultStruct.pincode
             document.getElementById("detailsEmail").innerHTML=resultStruct.email
             document.getElementById("detailsPhone").innerHTML=resultStruct.phn
+            resultStruct.roles = resultStruct.roles.trim()
+            resultStruct.roles = resultStruct.roles.replace(/ /g, ', ')
             document.getElementById("detailsRole").innerHTML=resultStruct.roles
         }
     });
@@ -187,9 +189,10 @@ function viewContact(viewId)
 function editContact(editId)
 {
     document.getElementById("contactForm").reset()
-    var editContactId= document.getElementById("editButton").value
+    // var editContactId= document.getElementById("editButton").value
     document.getElementById("submit").name="edit"
     document.getElementById("modalHeadingChange").innerHTML="EDIT CONTACT"
+    
     $.ajax({
         type:"POST",
         url:"./Components/addressBook.cfc?method=editContact",
@@ -212,6 +215,8 @@ function editContact(editId)
             document.getElementById("pincode").value=resultStruct.pincode
             document.getElementById("email").value=resultStruct.email
             document.getElementById("phoneNumber").value=resultStruct.phoneNumber
+            var array= resultStruct.roles.trim().split(" ")
+            $("#role").val(array)
         }
     });
 }

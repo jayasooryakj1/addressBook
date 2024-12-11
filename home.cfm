@@ -52,8 +52,9 @@
 
         <!--- PDF BODY --->
         <cfif structKeyExists(form, "pdfDownload")>
-            <cfset pdfObj = createObject("component", "components.addressBook")>
-            <cfset result = pdfObj.pdfDownloader()>
+            <cfset local.pdfObj = createObject("component", "components.addressBook")>
+            <cfset local.result = local.pdfObj.pdfDownloader()>
+            <cfset local.roleVar = "">
             <cfdocument  format="pdf" overwrite="yes" fileName="pdfDownload/downloadedPdf.pdf" orientation="landscape">
                 <table border="1">
                     <tr>
@@ -71,24 +72,31 @@
                         <th>pincode</th>
                         <th>email</th>
                         <th>phoneNumber</th>
+                        <th>roles</th>
                     </tr>
                     <cfoutput>
                         <cfloop query="#result#">
                             <tr>
                                 <td><img src="#result.photo#" width="30"></td>
-                                <td>#result.title#</td>
-                                <td>#result.fname#</td>
-                                <td>#result.lname#</td>
-                                <td>#result.gender#</td>
-                                <td>#result.dob#</td>
-                                <td>#result.address#</td>
-                                <td>#result.street#</td>
-                                <td>#result.district#</td>
-                                <td>#result.state#</td>
-                                <td>#result.country#</td>
-                                <td>#result.pincode#</td>
-                                <td>#result.email#</td>
-                                <td>#result.phoneNumber#</td>
+                                <td>#local.result.title#</td>
+                                <td>#local.result.fname#</td>
+                                <td>#local.result.lname#</td>
+                                <td>#local.result.gender#</td>
+                                <td>#local.result.dob#</td>
+                                <td>#local.result.address#</td>
+                                <td>#local.result.street#</td>
+                                <td>#local.result.district#</td>
+                                <td>#local.result.state#</td>
+                                <td>#local.result.country#</td>
+                                <td>#local.result.pincode#</td>
+                                <td>#local.result.email#</td>
+                                <td>#local.result.phoneNumber#</td>
+                                <td>
+                                    <cfset local.role = local.pdfObj.getRoles(local.result.contactId)>
+                                    <cfloop query="#local.role#">
+                                        #local.role.roleName#
+                                    </cfloop>
+                                </td>
                             </tr>
                         </cfloop>
                     </cfoutput>
@@ -217,10 +225,10 @@
                                     </div>
                                     <div class="modalHeadings mt-3 ms-4">
                                         <b>Role *</b><br>
-                                        <select class="form-control selectpicker" name="role" multiple>
-                                            <option value="1">One</option>
-                                            <option value="2">Two</option>
-                                            <option value="3">Three</option>
+                                        <select id="role" class="form-control selectpicker" name="role" multiple>
+                                            <option value=1>One</option>
+                                            <option value=2>Two</option>
+                                            <option value=3>Three</option>
                                         </select>
                                     </div>
                                     <div id="modalError" class="text-center mt-4"></div>
