@@ -2,6 +2,20 @@ if ( window.history.replaceState ) {
     window.history.replaceState( null, null, window.location.href );
 }
 
+// $(function(){
+//     var dateToday = new Date();
+//     var month = dateToday.getMonth() + 1;
+//     var day = dateToday.getDay();
+//     var year = dateToday.getFullYear();
+//     if(month<0)
+//         month='0'+month.toString();
+//     if(day<10)
+//         day='0'+day.toString();
+//     var maxDate = year + '-' + month + '-' + day;
+//     console.log(maxDate)
+//     $('.dob').attr('max', maxDate)
+// })
+
 function signupValidation(event) {
     var fullName =  document.getElementById("fullName").value;
     var email =  document.getElementById("email").value;
@@ -142,7 +156,7 @@ function deleteContact(dltObj){
             data:{dlt:dltObj.value},
             success:function(result){
                 if(result){
-                    location.reload();
+                    document.getElementById(dltObj.value).remove()
                 }
             }
         })
@@ -165,6 +179,9 @@ function viewContact(viewId)
             document.getElementById("detailsPincode").innerHTML=resultStruct.pincode
             document.getElementById("detailsEmail").innerHTML=resultStruct.email
             document.getElementById("detailsPhone").innerHTML=resultStruct.phn
+            resultStruct.roles = resultStruct.roles.trim()
+            resultStruct.roles = resultStruct.roles.replace(/ /g, ', ')
+            document.getElementById("detailsRole").innerHTML=resultStruct.roles
         }
     });
 }
@@ -172,9 +189,10 @@ function viewContact(viewId)
 function editContact(editId)
 {
     document.getElementById("contactForm").reset()
-    var editContactId= document.getElementById("editButton").value
+    // var editContactId= document.getElementById("editButton").value
     document.getElementById("submit").name="edit"
     document.getElementById("modalHeadingChange").innerHTML="EDIT CONTACT"
+    
     $.ajax({
         type:"POST",
         url:"./Components/addressBook.cfc?method=editContact",
@@ -197,6 +215,8 @@ function editContact(editId)
             document.getElementById("pincode").value=resultStruct.pincode
             document.getElementById("email").value=resultStruct.email
             document.getElementById("phoneNumber").value=resultStruct.phoneNumber
+            var array= resultStruct.roles.trim().split(" ")
+            $("#role").val(array)
         }
     });
 }
