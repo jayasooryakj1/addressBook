@@ -109,7 +109,8 @@ function modalValidation() {
     var email = document.getElementById("email").value;
     var phoneNumber = document.getElementById("phoneNumber").value;
     var contactId = document.getElementById("contactIdHidden").value;
-    if(title==""||fname==""||lname==""||gender==""||dob==""||address==""||street==""||district==""||state==""||country==""||pincode==""||email==""||phoneNumber==""){
+    var role = document.getElementById("roles").value;
+    if(title==""||fname==""||lname==""||gender==""||dob==""||address==""||street==""||district==""||state==""||country==""||pincode==""||email==""||phoneNumber==""||role==""){
         document.getElementById("modalError").innerHTML="*Enter all the fields*"
         document.getElementById("modalError").style.color="red"
         event.preventDefault();
@@ -124,6 +125,11 @@ function modalValidation() {
         document.getElementById("modalError").style.color="red"
         event.preventDefault();
     }
+    // else if(role==""){
+    //     document.getElementById("modalError").innerHTML="Select at least 1 role"
+    //     document.getElementById("modalError").style.color="red"
+    //     event.preventDefault();
+    // }
     $.ajax({
         type:"POST",
         url:"./components/addressBook.cfc?method=emailExist",
@@ -179,8 +185,6 @@ function viewContact(viewId)
             document.getElementById("detailsPincode").innerHTML=resultStruct.pincode
             document.getElementById("detailsEmail").innerHTML=resultStruct.email
             document.getElementById("detailsPhone").innerHTML=resultStruct.phn
-            resultStruct.roles = resultStruct.roles.trim()
-            resultStruct.roles = resultStruct.roles.replace(/ /g, ', ')
             document.getElementById("detailsRole").innerHTML=resultStruct.roles
         }
     });
@@ -215,8 +219,8 @@ function editContact(editId)
             document.getElementById("pincode").value=resultStruct.pincode
             document.getElementById("email").value=resultStruct.email
             document.getElementById("phoneNumber").value=resultStruct.phoneNumber
-            var array= resultStruct.roles.trim().split(" ")
-            $("#role").val(array)
+            var roleArray= resultStruct.roles.trim().split(" ")
+            $("#roles").val(roleArray)
         }
     });
 }

@@ -55,7 +55,8 @@
             <cfset local.pdfObj = createObject("component", "components.addressBook")>
             <cfset local.result = local.pdfObj.pdfDownloader()>
             <cfset local.roleVar = "">
-            <cfdocument  format="pdf" overwrite="yes" fileName="pdfDownload/downloadedPdf.pdf" orientation="landscape">
+            <cfset local.pdfFileName = "jayasoorya"&dateTimeFormat(now(), "dd-mm-yyyy.HH.nn.ss")>
+            <cfdocument  format="pdf" fileName="pdfDownload/#pdfFileName#.pdf" orientation="landscape">
                 <table border="1">
                     <tr>
                         <th>photo</th>
@@ -91,12 +92,7 @@
                                 <td>#local.result.pincode#</td>
                                 <td>#local.result.email#</td>
                                 <td>#local.result.phoneNumber#</td>
-                                <td>
-                                    <cfset local.role = local.pdfObj.getRoles(local.result.contactId)>
-                                    <cfloop query="#local.role#">
-                                        #local.role.roleName#
-                                    </cfloop>
-                                </td>
+                                <td>#local.result.roleNames#</td>
                             </tr>
                         </cfloop>
                     </cfoutput>
@@ -225,7 +221,7 @@
                                     </div>
                                     <div class="modalHeadings mt-3 ms-4">
                                         <b>Role *</b><br>
-                                        <select id="role" class="form-control selectpicker" name="role" multiple>
+                                        <select id="roles" class="form-control selectpicker" name="role" multiple>
                                             <option value=1>One</option>
                                             <option value=2>Two</option>
                                             <option value=3>Three</option>
