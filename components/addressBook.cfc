@@ -14,8 +14,8 @@
                 COUNT(userName) AS count,
                 COUNT(email) AS countEmail 
             FROM users 
-            WHERE userName=<cfqueryparam value='#arguments.userName#' cfsqltype="CF_SQL_VARCHAR"> OR
-                email=<cfqueryparam value='#arguments.email#' cfsqltype="CF_SQL_VARCHAR">
+            WHERE userName=<cfqueryparam value='#arguments.userName#' cfsqltype="CF_SQL_VARCHAR"> 
+                OR email=<cfqueryparam value='#arguments.email#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
         <cfif local.query.count GT 0 or local.query.countEmail GT 0>
             <cfset local.result = "Username or email already exists">
@@ -51,9 +51,11 @@
                 pwd, 
                 userImage, 
                 userId 
-            FROM users 
-            WHERE userName=<cfqueryparam value='#arguments.userName#'>
-            AND pwd = <cfqueryparam value='#local.hashedPassword#'>
+            FROM 
+                users 
+            WHERE 
+                userName=<cfqueryparam value='#arguments.userName#'>
+                AND pwd = <cfqueryparam value='#local.hashedPassword#'>
         </cfquery>
         <cfif queryRecordCount(local.check)>
             <cfset local.result = "true">
@@ -111,9 +113,10 @@
         </cfquery>
         <cfloop list="#arguments.contactStruct["role"]#" item="item" delimiters=",">
             <cfquery name="local.insertRole">
-                INSERT INTO contactRoles(
-                    contactid,
-                    roleId
+                INSERT INTO 
+                    contactRoles(
+                        contactid,
+                        roleId
                 )
                 VALUES(
                     <cfqueryparam value='#local.entryResult.generatedkey#'cfsqltype="CF_SQL_INTEGER">,
@@ -134,13 +137,14 @@
                 contactId 
             FROM contacts 
             WHERE _createdBy=<cfqueryparam value='#session.userid#' cfsqltype="CF_SQL_INTEGER">
+            AND active=<cfqueryparam value=1 cfsqltype="CF_SQL_INTEGER">
         </cfquery>
         <cfreturn "#contacts#">
     </cffunction>
 
     <cffunction  name="deleteFunction" access="remote" returntype="any">
         <cfargument  name="dlt">
-        <cfquery name="local.dltContact">
+        <!---<cfquery name="local.dltContact">
             DELETE 
             FROM contactRoles 
             WHERE contactId =<cfqueryparam value='#arguments.dlt#' cfsqltype="CF_SQL_VARCHAR">
@@ -149,6 +153,13 @@
             DELETE 
             FROM contacts 
             WHERE contactId =<cfqueryparam value='#arguments.dlt#' cfsqltype="CF_SQL_VARCHAR">
+        </cfquery>--->
+        <cfquery name="local.dltContact">
+            UPDATE contacts
+            SET
+                active = <cfqueryparam value=0 cfsqltype="CF_SQL_INTEGER">
+            WHERE
+                contactId =<cfqueryparam value='#arguments.dlt#' cfsqltype="CF_SQL_VARCHAR">
         </cfquery>
         <cfreturn true>
     </cffunction>
@@ -225,6 +236,7 @@
             FROM contacts 
             WHERE email=<cfqueryparam value='#arguments.existentEmail#' cfsqltype="CF_SQL_VARCHAR">
             AND _createdBy=<cfqueryparam value='#session.userid#' cfsqltype="CF_SQL_VARCHAR">
+            AND active=<cfqueryparam value=1 cfsqltype="CF_SQL_INTEGER">
         </cfquery>
         <cfloop query="qry">
             <cfif qry.contactId NEQ arguments.contactId>
@@ -238,6 +250,7 @@
             FROM contacts 
             WHERE phoneNumber=<cfqueryparam value='#arguments.existentNumber#' cfsqltype="CF_SQL_VARCHAR">
             AND _createdBy=<cfqueryparam value='#session.userid#' cfsqltype="CF_SQL_VARCHAR">
+            AND active=<cfqueryparam value=1 cfsqltype="CF_SQL_INTEGER">
         </cfquery>
         <cfloop query="local.number">
             <cfif number.contactId NEQ arguments.contactId>
@@ -277,13 +290,14 @@
                 phoneNumber,
 				STRING_AGG(roleName,', ') AS roleNames,
 				STRING_AGG(roles.roleId, ', ')AS roleId
-            FROM contacts
-            LEFT JOIN contactRoles 
-            ON contactRoles.contactId = contacts.contactId
-            LEFT JOIN roles
-            ON roles.roleId = contactRoles.roleId
+            FROM 
+                contacts
+            LEFT JOIN contactRoles AS cr ON cr.contactId = contacts.contactId
+            LEFT JOIN roles AS ro ON ro.roleId = cr.roleId
             WHERE #local.colName#=<cfqueryparam value="#local.condition#" cfsqltype="CF_SQL_INTEGER">
-            GROUP BY title, contacts.contactid,
+            GROUP BY 
+                title, 
+                contacts.contactid,
                 fname, 
                 lname, 
                 gender, 
@@ -296,7 +310,8 @@
                 country, 
                 pincode, 
                 email, 
-                phoneNumber
+                phoneNumber,
+                active
         </cfquery>
         <cfif structKeyExists(arguments, "id")>
             <!---<cfset local.joinObj = getRoles(arguments.id)>--->

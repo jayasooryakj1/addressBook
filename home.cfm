@@ -117,6 +117,35 @@
                 <button type="button" onclick="createContact()" class="btn btn-primary rounded-pill mt-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                     CREATE CONTACT
                 </button>
+                <button type="button" class="btn btn-primary rounded-pill mt-3" data-bs-toggle="modal" data-bs-target="#uploadContact">
+                    UPLOAD CONTACT
+                </button>
+            </div>
+
+            <!-- UPLOAD -->
+            <div class="modal fade" id="uploadContact" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header px-4 mt-2">
+                            <button class="btn btn-primary">Template with data</button>
+                            <button class="btn btn-success">Plain Template</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="uploadHeader">
+                                <h3>Uplaod Excel File</h3>
+                            </div>
+                            <div>
+                                <label class="uploadExcel mt-5" for=""><b>Upload Excel*</b></label><br>
+                                <input class="mt-3" type="file">
+                            </div>
+                        </div>
+                        <div class="modal-footer mt-3 p-3 d-flex">
+                            <button class="me-5 border-success greenText bg-white">Download Result</button>
+                            <button type="button" class="ms-5 btn btn-primary rounded-pill">Save changes</button>
+                            <button type="button" class="btn uploadExcel border-primary rounded-pill" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!--- CREATE/EDIT MODAL --->
@@ -298,7 +327,7 @@
                                     </tr>
                                 </cfloop>--->
                                 <cfset ormReload()>
-                                <cfset var = entityLoad("contacts", {_createdBy=#session.userid#})>
+                                <cfset var = entityLoad("contacts", {_createdBy=#session.userid#, active=1})>
                                 <cfloop array="#var#" item="item">
                                     <tr class="borderBottom" id="#item.getcontactId()#">
                                         <td class="text-center pt-3 pb-3"><img src="#item.getphoto()#" height="70" width="70" class="contactPic"></td>
