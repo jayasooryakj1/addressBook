@@ -30,7 +30,7 @@
 
 .userCard{
     width: 13vw;
-    height: 205px;
+    height: 255px;
 }
 
 .contacts{
@@ -194,4 +194,17 @@
     background-color: rgb(51, 122, 183);
     border: none;
     color: white;
+}
+
+.uploadHeader{
+    color: rgb(51, 122, 183);
+    border-bottom: 2px solid rgb(51, 122, 183);
+}
+
+.uploadExcel{
+    color: rgb(51, 122, 183);
+}
+
+.greenText{
+    color: green;
 }
