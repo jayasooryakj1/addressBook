@@ -123,26 +123,29 @@
             </div>
 
             <!-- UPLOAD -->
-            <div class="modal fade" id="uploadContact" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" data-bs-backdrop="static" id="uploadContact" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header px-4 mt-2">
-                            <button class="btn btn-primary">Template with data</button>
-                            <button class="btn btn-success">Plain Template</button>
+                            <button class="btn btn-primary" onclick="spreadsheetDownload()">Template with data</button>
+                            <button class="btn btn-success" onclick="spreadsheetHead()">Plain Template</button>
                         </div>
                         <div class="modal-body">
                             <div class="uploadHeader">
-                                <h3>Uplaod Excel File</h3>
+                                <h3>Upload Excel File</h3>
                             </div>
                             <div>
-                                <label class="uploadExcel mt-5" for=""><b>Upload Excel*</b></label><br>
-                                <input class="mt-3" type="file">
+                                <form id="spreadsheetForm" method="post"  enctype="multipart/form-data">
+                                    <label class="uploadExcel mt-5" for="spreadsheetUpload"><b>Upload Excel*</b></label><br>
+                                    <input class="mt-3" type="file" id="spreadsheetUpload">
+                                </form>
                             </div>
+                            <div id="contactsUploadError"></div>
                         </div>
                         <div class="modal-footer mt-3 p-3 d-flex">
                             <button class="me-5 border-success greenText bg-white">Download Result</button>
-                            <button type="button" class="ms-5 btn btn-primary rounded-pill">Save changes</button>
-                            <button type="button" class="btn uploadExcel border-primary rounded-pill" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="ms-5 btn btn-primary rounded-pill" onclick="spreadsheetUpload()">SUBMIT</button>
+                            <button type="button" class="btn uploadExcel border-primary rounded-pill" data-bs-dismiss="modal"  onclick="reloadForm()">Close</button>
                         </div>
                     </div>
                 </div>

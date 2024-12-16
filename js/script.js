@@ -248,6 +248,42 @@ function spreadsheetDownload() {
     }
 }
 
+function reloadForm(){
+    document.getElementById("contactsUploadError").innerHTML=""
+}
+
+function spreadsheetHead() {
+    if(confirm("Download .xlsx file?")){
+        $.ajax({
+            type:"post",
+            url:"components/addressBook.cfc?method=spreadSheetHeaders"
+        })
+    }
+}
+
+function spreadsheetUpload(){
+    // document.getElementById("spreadsheetForm").reset()
+    document.getElementById("contactsUploadError").innerHTML=""
+    var uploadFile = document.getElementById("spreadsheetUpload").files[0]
+    var uploadObj = new FormData()
+    uploadObj.append("uploadData", uploadFile)
+    if(uploadFile.files.length>0){
+        document.getElementById("contactsUploadError").innerHTML=""
+        $.ajax({
+            type:"POST",
+            url:"./components/addressBook.cfc?method=spreadsheetUpload",
+            contentype:false,
+            processdata:false,
+            data:uploadObj
+        })
+    }
+    else{
+        document.getElementById("contactsUploadError").innerHTML="Select a file"
+        document.getElementById("contactsUploadError").style.color="red"
+    }
+}
+
+
 function pdfDownloadAlert(){
     if(confirm("Download .pdf file?")){
         return true

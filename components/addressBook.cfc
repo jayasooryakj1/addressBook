@@ -289,7 +289,7 @@
                 email, 
                 phoneNumber,
 				STRING_AGG(roleName,', ') AS roleNames,
-				STRING_AGG(roles.roleId, ', ')AS roleId
+				STRING_AGG(ro.roleId, ', ')AS roleId
             FROM 
                 contacts
             LEFT JOIN contactRoles AS cr ON cr.contactId = contacts.contactId
@@ -372,6 +372,14 @@
         <cfset local.filePath = ExpandPath("../spreadsheetDownloads/"&local.spreadsheetName)>
         <cfspreadsheet action="write" query="local.spreadSheetData" filename="#local.filePath#" overwrite="yes">
         <cfreturn true>
+    </cffunction>
+
+    <cffunction  name="spreadSheetHeaders" access="remote">
+        <cfset local.plainData = spreadsheetNew("name")>
+        <cfset spreadsheetAddRow(local.plainData, 'Title, firstName, lastName, gender, dob, address, street, district, state, country, pincode, email, phoneNumber, roleNames')>
+        <cfset local.spreadsheetName = "plainTemplate"&dateTimeFormat(now(), "dd-mm-yyyy.HH.nn.ss")&".xlsx">
+        <cfset local.filePath = ExpandPath("../spreadsheetDownloads/"&local.spreadsheetName)>
+        <cfspreadsheet action="write" name="local.plainData" filename="#local.filePath#" overwrite="yes">
     </cffunction>
 
     <cffunction  name="pdfDownloader">
@@ -500,6 +508,12 @@
             repeat="0"
         >
         </cfschedule>
+    </cffunction>
+
+    <cffunction  name="spreadsheetUpload" access="remote">
+        <cfargument  name="uploadData">
+        <cfspreadsheet  action="read" headerrow="1" excludeheaderrow="true" query="uploadedData" src="#arguments.uploadData#">
+        
     </cffunction>
     
 </cfcomponent>
