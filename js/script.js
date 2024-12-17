@@ -263,20 +263,28 @@ function spreadsheetHead() {
 
 function spreadsheetUpload(){
     // document.getElementById("spreadsheetForm").reset()
-    document.getElementById("contactsUploadError").innerHTML=""
-    var uploadFile = document.getElementById("spreadsheetUpload").files[0]
+    var uploadFile = document.getElementById("spreadsheetUpload")
     var uploadObj = new FormData()
-    uploadObj.append("uploadData", uploadFile)
+    uploadObj.append("uploadData", uploadFile.files[0])
     if(uploadFile.files.length>0){
         document.getElementById("contactsUploadError").innerHTML=""
-        $.ajax({
-            type:"POST",
-            url:"./components/addressBook.cfc?method=spreadsheetUpload",
-            contentype:false,
-            processdata:false,
-            data:uploadObj
-        })
-    }
+        var xlsxExtension = /\.xlsx/i;
+        var fileName = uploadFile.name
+        if(xlsxExtension.text(fileName)){
+            $.ajax({
+                type:"POST",
+                url:"./components/addressBook.cfc?method=spreadsheetUpload",
+                contentype:false,
+                processdata:false,
+                data:uploadObj
+            })
+        }
+        else{
+            document.getElementById("contactsUploadError").innerHTML=""
+            document.getElementById("contactsUploadError").innerHTML="Upload .xlsx file"
+        }
+
+        }
     else{
         document.getElementById("contactsUploadError").innerHTML="Select a file"
         document.getElementById("contactsUploadError").style.color="red"
