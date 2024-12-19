@@ -40,14 +40,17 @@
             </div>
         </div>
         <cfif structKeyExists(form, "submit")>
-            <cfset local.value = createObject("component", "components.addressBook")>
-            <cfset local.result = local.value.login(form.userName, form.password)>
-            <cfif local.result=="true">
+            <cfset value = createObject("component", "components.addressBook")>
+            <cfset result = value.login(
+                userName = form.userName, 
+                password = form.password
+            )>
+            <cfif result=="true">
                 <cflocation  url="home.cfm">
             <cfelse>
                 <div class="d-flex justify-content-center">
                     <cfoutput>
-                        #local.result#
+                        #result#
                     </cfoutput>
                 </div>
             </cfif>
