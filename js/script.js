@@ -250,6 +250,7 @@ function spreadsheetDownload() {
 
 function reloadForm(){
     document.getElementById("contactsUploadError").innerHTML=""
+    document.getElementById("spreadsheetForm").reset();
 }
 
 function spreadsheetHead() {
@@ -261,35 +262,39 @@ function spreadsheetHead() {
     }
 }
 
-function spreadsheetUpload(){
-    // document.getElementById("spreadsheetForm").reset()
+function spreadsheetUploadFunction(){
     var uploadFile = document.getElementById("spreadsheetUpload")
     var uploadObj = new FormData()
-    uploadObj.append("uploadData", uploadFile.files[0])
-    if(uploadFile.files.length>0){
-        document.getElementById("contactsUploadError").innerHTML=""
-        var xlsxExtension = /\.xlsx/i;
-        var fileName = uploadFile.name
-        if(xlsxExtension.text(fileName)){
-            $.ajax({
-                type:"POST",
-                url:"./components/addressBook.cfc?method=spreadsheetUpload",
-                contentype:false,
-                processdata:false,
-                data:uploadObj
-            })
-        }
-        else{
-            document.getElementById("contactsUploadError").innerHTML=""
-            document.getElementById("contactsUploadError").innerHTML="Upload .xlsx file"
-        }
-
+    uploadObj.append("uploadData", document.getElementById("spreadsheetUpload").files[0])
+    var fileInput = uploadFile.files[0];
+    if(fileInput){
+            var isXlsl = fileInput.name.endsWith(".xlsx")
+            if(isXlsl){
+                document.getElementById("contactsUploadError").innerHTML=""
+                if(confirm("Download .xlsx file?")){
+                    $.ajax({
+                        type:"POST",
+                        url:"components/addressBook.cfc?method=resultDownload",
+                        contentType:false,
+                        processData:false,
+                        data:uploadObj
+                    })
+                    document.getElementById("contactsUploadError").innerHTML="Result downloaded"
+                    document.getElementById("contactsUploadError").style.color="green"
+                }
+            }
+            else
+                document.getElementById("contactsUploadError").innerHTML="Uploaded file is not of .xlsx format"
+                document.getElementById("contactsUploadError").style.color="red"
+                event.preventDefault()
         }
     else{
         document.getElementById("contactsUploadError").innerHTML="Select a file"
         document.getElementById("contactsUploadError").style.color="red"
+        event.preventDefault()
     }
 }
+
 
 
 function pdfDownloadAlert(){

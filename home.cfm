@@ -138,15 +138,14 @@
                                 <form id="spreadsheetForm" method="post"  enctype="multipart/form-data">
                                     <label class="uploadExcel mt-5" for="spreadsheetUpload"><b>Upload Excel*</b></label><br>
                                     <input class="mt-3" type="file" id="spreadsheetUpload">
-                                </form>
                             </div>
                             <div id="contactsUploadError"></div>
                         </div>
                         <div class="modal-footer mt-3 p-3 d-flex">
-                            <button class="me-5 border-success greenText bg-white">Download Result</button>
-                            <button type="button" class="ms-5 btn btn-primary rounded-pill" onclick="spreadsheetUpload()">SUBMIT</button>
+                            <button type="submit" class="ms-5 btn btn-primary rounded-pill" onclick="spreadsheetUploadFunction()" id="spreadsheetUpload">SUBMIT</button>
                             <button type="button" class="btn uploadExcel border-primary rounded-pill" data-bs-dismiss="modal"  onclick="reloadForm()">Close</button>
                         </div>
+                                </form>
                     </div>
                 </div>
             </div>

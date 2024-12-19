@@ -510,10 +510,40 @@
         </cfschedule>
     </cffunction>
 
-    <cffunction  name="spreadsheetUpload" access="remote">
+    <cffunction  name="resultDownload" access="remote">
         <cfargument  name="uploadData">
-        <cfspreadsheet  action="read" headerrow="1" excludeheaderrow="true" query="uploadedData" src="#arguments.uploadData#">
-        
+        <cfspreadsheet  action="read" headerrow="1" excludeheaderrow="true" query="local.uploadedData" src="#arguments.uploadData#">
+        <cfset local.exceptionsArray = arrayNew(1)>
+        <cfset local.headerArray = ["title", "firstName", "lastName", "gender", "dob", "address", "street", "district", "state", "country", "pincode", "email", "phoneNumber", "roleNames"]>
+        <cfloop query="local.uploadedData">
+            <cfset local.exceptionsArray[local.uploadedData.currentRow] = "">
+            <cfloop array="#local.headerArray#" item="item">
+                <cfif local.uploadedData[item].toString() EQ "">
+                    <cfset local.exceptionsArray[local.uploadedData.currentRow] = local.exceptionsArray[local.uploadedData.currentRow]  & item & " missing ">
+                </cfif>
+            </cfloop>
+            <cfif local.uploadedData["title"].toString() NEQ "Mr" OR local.uploadedData["title"].toString() NEQ "Ms">
+                <cfset local.exceptionsArray[local.uploadedData.currentRow] = local.exceptionsArray[local.uploadedData.currentRow] & " Title can only be Mr or Ms ">
+            </cfif>
+            <cfif isValid("date", local.uploadedData["dob"].toString())>
+                <cfif dateFormat(local.uploadedData["dob"].toString(), "yyyy-mm-dd") GT now()>
+                    <cfset local.exceptionsArray[local.uploadedData.currentRow] = local.exceptionsArray[local.uploadedData.currentRow] & " dob cannot be a future day ">
+                </cfif>
+            <cfelse>
+                <cfset local.exceptionsArray[local.uploadedData.currentRow] = local.exceptionsArray[local.uploadedData.currentRow] & " invalid dob ">
+            </cfif>
+            <cfif local.uploadedData["gender"].toString() NEQ "male" OR local.uploadedData["gender"].toString() NEQ "female">
+                <cfset local.exceptionsArray[local.uploadedData.currentRow] = local.exceptionsArray[local.uploadedData.currentRow] & " Gender can only be male or female ">
+            </cfif>
+            <cfif isValid("integer", local.uploadedData["pincode"].toString()) AND local.uploadedData["pincode"].toString().len EQ 6>
+            <cfelse>
+                <cfset local.exceptionsArray[local.uploadedData.currentRow] = local.exceptionsArray[local.uploadedData.currentRow] & " Invalid pincode ">
+            </cfif>
+        </cfloop>
+        <cfset  queryAddColumn("#local.uploadedData#", "exceptions", "#local.exceptionsArray#")>
+        <cfdump  var="#local.uploadedData#">
+        <cfset local.filePath = ExpandPath("../spreadsheetDownloads/upload_Result.xlsx")>
+        <cfspreadsheet action="write" query="local.uploadedData" filename="#local.filePath#" overwrite="yes">
     </cffunction>
     
 </cfcomponent>
