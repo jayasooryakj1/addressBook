@@ -288,7 +288,7 @@
                             result="fileName">
                     <cfset contact[photo] = uploadLocation&fileName.serverfile>
                 <cfelse>
-                    <cfset form.photo = "/userDefault.jpg">
+                    <cfset form.photo = "./assets/imageUploads//userDefault.jpg">
                     <cfset contact[photo] = uploadLocation&"#form.photo#">
                 </cfif>
                 <cfloop collection="#form#" item="item">

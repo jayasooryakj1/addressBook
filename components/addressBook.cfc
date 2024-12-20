@@ -71,7 +71,7 @@
 
     <cffunction  name="contactsEntry">
         <cfargument  name="contactStruct">
-        <cfset local.imageLink = "#arguments.contactStruct[photo]#">
+        <cfset local.imageLink = "#arguments.contactStruct["photo"]#">
         <cfset local.today = now()>
         <cfquery name="local.entry" result="local.entryResult">
             INSERT INTO contacts (
@@ -177,7 +177,7 @@
 
     <cffunction  name="contactsUpdate">
         <cfargument  name="contactUpdate">
-        <cfset local.imageLink = "#arguments.contactUpdate[photo]#">
+        <cfset local.imageLink = "#arguments.contactUpdate["photo"]#">
         <cfset local.today = now()>
         <cfquery name="local.update">
             UPDATE contacts 
@@ -187,7 +187,9 @@
                 lname = <cfqueryparam value='#contactUpdate["lname"]#' cfsqltype="CF_SQL_VARCHAR">,
                 gender = <cfqueryparam value='#contactUpdate["gender"]#' cfsqltype="CF_SQL_VARCHAR">,
                 dob = <cfqueryparam value='#contactUpdate["dob"]#' cfsqltype="CF_SQL_VARCHAR">,
-                photo = <cfqueryparam value='#local.imageLink#' cfsqltype="CF_SQL_VARCHAR">,
+                <cfif local.imageLink NEQ "">
+                    photo = <cfqueryparam value='#local.imageLink#' cfsqltype="CF_SQL_VARCHAR">,
+                </cfif>
                 address = <cfqueryparam value='#contactUpdate["address"]#' cfsqltype="CF_SQL_VARCHAR">,
                 street = <cfqueryparam value='#contactUpdate["street"]#' cfsqltype="CF_SQL_VARCHAR">,
                 district = <cfqueryparam value='#contactUpdate["district"]#' cfsqltype="CF_SQL_VARCHAR">,
@@ -217,7 +219,6 @@
                 )
             </cfquery>
         </cfloop>
-        <cflocation  url="home.cfm">
     </cffunction>
 
     <cffunction  name="logoutFunction" access="remote">
@@ -522,7 +523,8 @@
                     <cfset local.exceptionsArray[local.uploadedData.currentRow] = local.exceptionsArray[local.uploadedData.currentRow]  & item & " missing ">
                 </cfif>
             </cfloop>
-            <cfif local.uploadedData["title"].toString() NEQ "Mr" OR local.uploadedData["title"].toString() NEQ "Ms">
+            <cfif local.uploadedData["title"].toString() EQ "Mr" OR local.uploadedData["title"].toString() EQ "Ms">
+            <cfelse>
                 <cfset local.exceptionsArray[local.uploadedData.currentRow] = local.exceptionsArray[local.uploadedData.currentRow] & " Title can only be Mr or Ms ">
             </cfif>
             <cfif isValid("date", local.uploadedData["dob"].toString())>
@@ -532,17 +534,96 @@
             <cfelse>
                 <cfset local.exceptionsArray[local.uploadedData.currentRow] = local.exceptionsArray[local.uploadedData.currentRow] & " invalid dob ">
             </cfif>
-            <cfif local.uploadedData["gender"].toString() NEQ "male" OR local.uploadedData["gender"].toString() NEQ "female">
+            <cfif local.uploadedData["gender"].toString() EQ "male" OR local.uploadedData["gender"].toString() EQ "female">
+            <cfelse>
                 <cfset local.exceptionsArray[local.uploadedData.currentRow] = local.exceptionsArray[local.uploadedData.currentRow] & " Gender can only be male or female ">
             </cfif>
-            <cfif isValid("integer", local.uploadedData["pincode"].toString()) AND local.uploadedData["pincode"].toString().len EQ 6>
+            <cfif isValid("integer", local.uploadedData["pincode"].toString()) AND len(local.uploadedData["pincode"].toString()) EQ 6>
             <cfelse>
                 <cfset local.exceptionsArray[local.uploadedData.currentRow] = local.exceptionsArray[local.uploadedData.currentRow] & " Invalid pincode ">
             </cfif>
+            <cfif isValid("integer", local.uploadedData["phoneNumber"].toString()) AND len(local.uploadedData["phoneNumber"].toString()) EQ 10>
+            <cfelse>
+                <cfset local.exceptionsArray[local.uploadedData.currentRow] = local.exceptionsArray[local.uploadedData.currentRow] & " Invalid phone number ">
+            </cfif>
+            <cfif ReFind("^[^@]+@[^@]+$", local.uploadedData["email"].toString())>
+            <cfelse>
+                <cfset local.exceptionsArray[local.uploadedData.currentRow] = local.exceptionsArray[local.uploadedData.currentRow] & " Invalid mail id ">
+            </cfif>
+            <cfquery name="local.getRoles">
+                SELECT
+                    roleName,
+                    roleId
+                FROM
+                    roles
+            </cfquery>
+            <cfset local.roleNamesArray = valueArray(local.getRoles, "roleName")>
+            <cfloop list="#local.uploadedData["roleNames"].toString()#" item="item" delimiters=','>
+                <cfif NOT arrayContains(local.roleNamesArray, item)>
+                    <cfset local.exceptionsArray[local.uploadedData.currentRow] = local.exceptionsArray[local.uploadedData.currentRow] & " Invalid roleName " & item>
+                </cfif>
+            </cfloop>
+
+            <!---CHECK--->
+            <cfif local.exceptionsArray[local.uploadedData.currentRow] EQ "">
+                <cfset local.rolesList = "">
+                <cfset local.contactStruct["role"] = "">
+                <cfloop list="#local.uploadedData["roleNames"].toString()#" item="item" delimiters =",">
+                    <!---<cfquery name="local.getRoleId">
+                        SELECT
+                            roleId
+                        FROM
+                            roles
+                        WHERE
+                            roleName= <cfqueryparam  value="#item#" cfsqltype="CF_SQL_VARCHAR">
+                    </cfquery>--->
+                    <cfset local.contactStruct["role"] = listAppend(local.contactStruct["role"], local.getRoles.roleId)>
+                </cfloop>
+                <cfset local.roleIdArray = valueArray(local.getRoles, "roleid")>
+                <cfset local.today = now()>
+                <cfset local.contactStruct["title"] = local.uploadedData["Title"].toString()>
+                <cfset local.contactStruct["fname"] = local.uploadedData["firstName"].toString()>
+                <cfset local.contactStruct["lname"] = local.uploadedData["lastName"].toString()>
+                <cfset local.contactStruct["gender"] = local.uploadedData["gender"].toString()>
+                <cfset local.contactStruct["dob"] = local.uploadedData["dob"].toString()>
+                <cfset local.contactStruct["address"] = local.uploadedData["address"].toString()>
+                <cfset local.contactStruct["street"] = local.uploadedData["street"].toString()>
+                <cfset local.contactStruct["district"] = local.uploadedData["district"].toString()>
+                <cfset local.contactStruct["state"] = local.uploadedData["state"].toString()>
+                <cfset local.contactStruct["country"] = local.uploadedData["country"].toString()>
+                <cfset local.contactStruct["pincode"] = local.uploadedData["pincode"].toString()>
+                <cfset local.contactStruct["email"] = local.uploadedData["email"].toString()>
+                <cfset local.contactStruct["phoneNumber"] = local.uploadedData["phoneNumber"].toString()>
+                <cfset local.contactStruct["_createdBy"] = session.user>
+                <cfset local.contactStruct["_createdOn"] = local.today>
+                <cfquery name="local.checkMail">
+                    SELECT
+                        contactid
+                    FROM
+                        contacts
+                    WHERE
+                        email = <cfqueryparam value='#local.uploadedData["email"].toString()#' cfsqltype="CF_SQL_VARCHAR"> 
+                        AND
+                        _createdBy = <cfqueryparam value='#session.userid#' cfsqltype="CF_SQL_VARCHAR"> 
+                        AND
+                        active = <cfqueryparam value=1 cfsqltype="CF_SQL_INTEGER">
+                </cfquery>
+                <cfif local.checkMail.RecordCount GT 0>
+                <cfset local.contactStruct["photo"] = "">
+                    <cfset local.contactStruct["contactid"] = local.checkMail.contactid>
+                    <cfset contactsUpdate(local.contactStruct)>
+                    <cfset local.exceptionsArray[local.uploadedData.currentRow] = " Contact Updated ">
+                <cfelse>
+                    <cfset local.contactStruct["photo"] = "./assets/imageUploads//userDefault.jpg">
+                    <cfset contactsEntry(local.contactStruct)>
+                    <cfset local.exceptionsArray[local.uploadedData.currentRow] = " Contact Added ">
+                    location.reload()
+                </cfif>
+            </cfif>
         </cfloop>
         <cfset  queryAddColumn("#local.uploadedData#", "exceptions", "#local.exceptionsArray#")>
-        <cfdump  var="#local.uploadedData#">
-        <cfset local.filePath = ExpandPath("../spreadsheetDownloads/upload_Result.xlsx")>
+         <cfset local.spreadsheetName = "upload_Result"&dateTimeFormat(now(), "dd-mm-yyyy.HH.nn.ss")&".xlsx">
+        <cfset local.filePath = ExpandPath("../spreadsheetDownloads/"&local.spreadsheetName)>
         <cfspreadsheet action="write" query="local.uploadedData" filename="#local.filePath#" overwrite="yes">
     </cffunction>
     

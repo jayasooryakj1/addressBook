@@ -251,6 +251,7 @@ function spreadsheetDownload() {
 function reloadForm(){
     document.getElementById("contactsUploadError").innerHTML=""
     document.getElementById("spreadsheetForm").reset();
+    location.reload()
 }
 
 function spreadsheetHead() {
