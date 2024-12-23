@@ -2,7 +2,7 @@
     
     <cfset this.ormEnabled = true>
     <cfset this.sessionmanagement="true">
-    <cfset this.datasource = "dataSource1">
+    <cfset this.datasource = "addressBookDataSource">
 
     <cffunction name="onRequest" >
         <cfargument  name="requestedpage">

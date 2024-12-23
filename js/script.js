@@ -2,6 +2,20 @@ if ( window.history.replaceState ) {
     window.history.replaceState( null, null, window.location.href );
 }
 
+// $(function(){
+//     var dateToday = new Date();
+//     var month = dateToday.getMonth() + 1;
+//     var day = dateToday.getDay();
+//     var year = dateToday.getFullYear();
+//     if(month<0)
+//         month='0'+month.toString();
+//     if(day<10)
+//         day='0'+day.toString();
+//     var maxDate = year + '-' + month + '-' + day;
+//     console.log(maxDate)
+//     $('.dob').attr('max', maxDate)
+// })
+
 function signupValidation(event) {
     var fullName =  document.getElementById("fullName").value;
     var email =  document.getElementById("email").value;
@@ -95,7 +109,8 @@ function modalValidation() {
     var email = document.getElementById("email").value;
     var phoneNumber = document.getElementById("phoneNumber").value;
     var contactId = document.getElementById("contactIdHidden").value;
-    if(title==""||fname==""||lname==""||gender==""||dob==""||address==""||street==""||district==""||state==""||country==""||pincode==""||email==""||phoneNumber==""){
+    var role = document.getElementById("roles").value;
+    if(title==""||fname==""||lname==""||gender==""||dob==""||address==""||street==""||district==""||state==""||country==""||pincode==""||email==""||phoneNumber==""||role==""){
         document.getElementById("modalError").innerHTML="*Enter all the fields*"
         document.getElementById("modalError").style.color="red"
         event.preventDefault();
@@ -110,6 +125,11 @@ function modalValidation() {
         document.getElementById("modalError").style.color="red"
         event.preventDefault();
     }
+    // else if(role==""){
+    //     document.getElementById("modalError").innerHTML="Select at least 1 role"
+    //     document.getElementById("modalError").style.color="red"
+    //     event.preventDefault();
+    // }
     $.ajax({
         type:"POST",
         url:"./components/addressBook.cfc?method=emailExist",
@@ -142,7 +162,7 @@ function deleteContact(dltObj){
             data:{dlt:dltObj.value},
             success:function(result){
                 if(result){
-                    location.reload();
+                    document.getElementById(dltObj.value).remove()
                 }
             }
         })
@@ -165,6 +185,7 @@ function viewContact(viewId)
             document.getElementById("detailsPincode").innerHTML=resultStruct.pincode
             document.getElementById("detailsEmail").innerHTML=resultStruct.email
             document.getElementById("detailsPhone").innerHTML=resultStruct.phn
+            document.getElementById("detailsRole").innerHTML=resultStruct.roles
         }
     });
 }
@@ -172,9 +193,10 @@ function viewContact(viewId)
 function editContact(editId)
 {
     document.getElementById("contactForm").reset()
-    var editContactId= document.getElementById("editButton").value
+    // var editContactId= document.getElementById("editButton").value
     document.getElementById("submit").name="edit"
     document.getElementById("modalHeadingChange").innerHTML="EDIT CONTACT"
+    
     $.ajax({
         type:"POST",
         url:"./Components/addressBook.cfc?method=editContact",
@@ -197,6 +219,8 @@ function editContact(editId)
             document.getElementById("pincode").value=resultStruct.pincode
             document.getElementById("email").value=resultStruct.email
             document.getElementById("phoneNumber").value=resultStruct.phoneNumber
+            var roleArray= resultStruct.roles.trim().split(" ")
+            $("#roles").val(roleArray)
         }
     });
 }
@@ -223,6 +247,56 @@ function spreadsheetDownload() {
         })
     }
 }
+
+function reloadForm(){
+    document.getElementById("contactsUploadError").innerHTML=""
+    document.getElementById("spreadsheetForm").reset();
+    location.reload()
+}
+
+function spreadsheetHead() {
+    if(confirm("Download .xlsx file?")){
+        $.ajax({
+            type:"post",
+            url:"components/addressBook.cfc?method=spreadSheetHeaders"
+        })
+    }
+}
+
+function spreadsheetUploadFunction(){
+    var uploadFile = document.getElementById("spreadsheetUpload")
+    var uploadObj = new FormData()
+    uploadObj.append("uploadData", document.getElementById("spreadsheetUpload").files[0])
+    var fileInput = uploadFile.files[0];
+    if(fileInput){
+            var isXlsl = fileInput.name.endsWith(".xlsx")
+            if(isXlsl){
+                document.getElementById("contactsUploadError").innerHTML=""
+                if(confirm("Download .xlsx file?")){
+                    $.ajax({
+                        type:"POST",
+                        url:"components/addressBook.cfc?method=resultDownload",
+                        contentType:false,
+                        processData:false,
+                        data:uploadObj
+                    })
+                    document.getElementById("contactsUploadError").innerHTML="Result downloaded"
+                    document.getElementById("contactsUploadError").style.color="green"
+                }
+            }
+            else
+                document.getElementById("contactsUploadError").innerHTML="Uploaded file is not of .xlsx format"
+                document.getElementById("contactsUploadError").style.color="red"
+                event.preventDefault()
+        }
+    else{
+        document.getElementById("contactsUploadError").innerHTML="Select a file"
+        document.getElementById("contactsUploadError").style.color="red"
+        event.preventDefault()
+    }
+}
+
+
 
 function pdfDownloadAlert(){
     if(confirm("Download .pdf file?")){
