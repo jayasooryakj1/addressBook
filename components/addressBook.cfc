@@ -612,19 +612,33 @@
                 <cfset local.contactStruct["photo"] = "">
                     <cfset local.contactStruct["contactid"] = local.checkMail.contactid>
                     <cfset contactsUpdate(local.contactStruct)>
-                    <cfset local.exceptionsArray[local.uploadedData.currentRow] = " Contact Updated ">
+                    <cfset local.exceptionsArray[local.uploadedData.currentRow] = "Contact Updated">
                 <cfelse>
                     <cfset local.contactStruct["photo"] = "./assets/imageUploads//userDefault.jpg">
                     <cfset contactsEntry(local.contactStruct)>
-                    <cfset local.exceptionsArray[local.uploadedData.currentRow] = " Contact Added ">
+                    <cfset local.exceptionsArray[local.uploadedData.currentRow] = "Contact Added">
                     location.reload()
                 </cfif>
             </cfif>
         </cfloop>
         <cfset  queryAddColumn("#local.uploadedData#", "exceptions", "#local.exceptionsArray#")>
-         <cfset local.spreadsheetName = "upload_Result"&dateTimeFormat(now(), "dd-mm-yyyy.HH.nn.ss")&".xlsx">
+        <cfset  querySort(local.uploadedData, sortFunction)>
+        <cfset local.spreadsheetName = "upload_Result"&dateTimeFormat(now(), "dd-mm-yyyy.HH.nn.ss")&".xlsx">
         <cfset local.filePath = ExpandPath("../spreadsheetDownloads/"&local.spreadsheetName)>
         <cfspreadsheet action="write" query="local.uploadedData" filename="#local.filePath#" overwrite="yes">
+    </cffunction>
+
+    <cffunction  name="sortFunction">
+        <cfargument  name="row1">
+        <cfargument  name="row2">
+        <cfset local.mapValues = {"Contact Updated": 1, "Contact Added":2}>
+        <cfif NOT structKeyExists(local.mapValues, arguments.row1.exceptions)>
+            <cfset local.mapValues[arguments.row1.exceptions] = 0>
+        </cfif>
+        <cfif NOT structKeyExists(local.mapValues, arguments.row2.exceptions)>
+            <cfset local.mapValues[arguments.row2.exceptions] = 0>
+        </cfif>
+        <cfreturn compare(local.mapValues[arguments.row1.exceptions], local.mapValues[arguments.row2.exceptions])>
     </cffunction>
     
 </cfcomponent>
